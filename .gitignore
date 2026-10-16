@@ -1,0 +1,7 @@
+.idea
+target
+__pycache__/
+*.pyc
+.vscode
+# Local kustomize overlays with account IDs (aws/README.md, step 7)
+overlays/

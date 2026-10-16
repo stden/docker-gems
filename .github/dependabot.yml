@@ -1,0 +1,44 @@
+# Check application dependencies, base images, and GitHub Actions for updates.
+version: 2
+
+updates:
+  - package-ecosystem: pip
+    directory: /my-python-app
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 5
+    groups:
+      python-dependencies:
+        patterns: ["*"]
+        update-types: [minor, patch]
+
+  - package-ecosystem: maven
+    directory: /java-eks
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 5
+    groups:
+      java-dependencies:
+        patterns: ["*"]
+        update-types: [minor, patch]
+
+  # Cover every top-level Dockerfile. Review floating tags under the AGENTS.md version policy.
+  # Review coordinated JDK, Argo CD, and PostgreSQL upgrades with their tests and manifests.
+  - package-ecosystem: docker
+    directories: ["/*"]
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      base-images:
+        patterns: ["*"]
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns: ["*"]

@@ -1,0 +1,5 @@
+flask
+requests  # Send HTTP requests.
+numpy
+mysql-connector-python  # Connect to MySQL.
+
