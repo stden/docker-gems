@@ -1,0 +1,28 @@
+# Build, test, and scan each image through the shared publication workflow.
+name: Docker security scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# The same group as the Hub pages workflow. A newer run for the same branch
+# stops the older image run and a Hub pages run in this group.
+# The two image runs do not publish at the same time.
+# The group of the called workflow does not apply to this run.
+concurrency:
+  group: docker-images-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  images:
+    permissions:
+      contents: read
+      security-events: write
+    uses: ./.github/workflows/docker-images.yml
+    secrets:
+      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}

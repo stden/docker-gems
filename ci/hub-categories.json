@@ -1,0 +1,160 @@
+{
+  "allure": [
+    "developer-tools",
+    "integration-and-delivery",
+    "languages-and-frameworks"
+  ],
+  "android": [
+    "developer-tools",
+    "integration-and-delivery",
+    "languages-and-frameworks"
+  ],
+  "argocd": [
+    "integration-and-delivery",
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
+  "code-quality": [
+    "developer-tools",
+    "security",
+    "languages-and-frameworks"
+  ],
+  "codegraph": [
+    "developer-tools",
+    "machine-learning-and-ai",
+    "languages-and-frameworks"
+  ],
+  "compilers": [
+    "languages-and-frameworks",
+    "developer-tools"
+  ],
+  "cpp": [
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
+  "cpp-cuda": [
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
+  "cpp-vulkan": [
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
+  "crossplane": [
+    "integration-and-delivery",
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
+  "document-tools": [
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
+  "graphify": [
+    "developer-tools",
+    "machine-learning-and-ai",
+    "languages-and-frameworks"
+  ],
+  "kafka": [
+    "integration-and-delivery",
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
+  "java": [
+    "languages-and-frameworks",
+    "developer-tools",
+    "integration-and-delivery"
+  ],
+  "java-17": [
+    "languages-and-frameworks",
+    "developer-tools",
+    "integration-and-delivery"
+  ],
+  "java-eks": [
+    "languages-and-frameworks",
+    "web-servers"
+  ],
+  "java-run-swing": [
+    "languages-and-frameworks",
+    "developer-tools"
+  ],
+  "java-ui-browser": [
+    "developer-tools",
+    "integration-and-delivery",
+    "languages-and-frameworks"
+  ],
+  "latex": [
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
+  "mailpit": [
+    "developer-tools",
+    "integration-and-delivery",
+    "languages-and-frameworks"
+  ],
+  "minio": [
+    "databases-and-storage",
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
+  "my-python-app": [
+    "languages-and-frameworks",
+    "developer-tools"
+  ],
+  "open-webui": [
+    "machine-learning-and-ai",
+    "web-servers",
+    "languages-and-frameworks"
+  ],
+  "php": [
+    "languages-and-frameworks",
+    "developer-tools",
+    "integration-and-delivery"
+  ],
+  "postgres-vector-graph": [
+    "databases-and-storage",
+    "data-science",
+    "languages-and-frameworks"
+  ],
+  "python": [
+    "languages-and-frameworks",
+    "developer-tools",
+    "integration-and-delivery"
+  ],
+  "python-media": [
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
+  "rabbitmq": [
+    "integration-and-delivery",
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
+  "rust": [
+    "languages-and-frameworks",
+    "developer-tools"
+  ],
+  "rust-ci": [
+    "developer-tools",
+    "integration-and-delivery",
+    "languages-and-frameworks"
+  ],
+  "rust-desktop": [
+    "languages-and-frameworks",
+    "developer-tools"
+  ],
+  "rust-node": [
+    "languages-and-frameworks",
+    "developer-tools",
+    "integration-and-delivery"
+  ],
+  "wiremock": [
+    "developer-tools",
+    "integration-and-delivery",
+    "languages-and-frameworks"
+  ],
+  "web-qa": [
+    "developer-tools",
+    "integration-and-delivery",
+    "languages-and-frameworks"
+  ]
+}

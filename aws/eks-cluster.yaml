@@ -1,0 +1,24 @@
+# Amazon EKS Auto Mode cluster for the course. Create it with:
+#   eksctl create cluster -f aws/eks-cluster.yaml
+# Delete the applications first. Then delete the cluster (see aws/README.md):
+#   eksctl delete cluster -f aws/eks-cluster.yaml --disable-nodegroup-eviction --wait
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: docker-gems
+  # If necessary, change the Region. Copy the images to ECR in the same Region.
+  region: us-east-1
+  # Use a version with standard support. Use kubectl with the same minor version, or
+  # one minor version newer or older. Check: aws eks describe-cluster-versions
+  version: "1.37"
+
+# EKS Auto Mode manages the nodes, the EBS storage, and the load balancers. Its
+# general-purpose NodePool starts On-Demand amd64 nodes, which are necessary for the images.
+autoModeConfig:
+  enabled: true
+
+# Extended support costs $0.50 more for each hour. With STANDARD, EKS upgrades the
+# control plane when the standard support of its version ends.
+upgradePolicy:
+  supportType: STANDARD

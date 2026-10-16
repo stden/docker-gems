@@ -1,0 +1,165 @@
+# Reuse one build for the smoke tests, the CVE scan, and publication.
+name: Docker images
+
+on:
+  workflow_call:
+    secrets:
+      DOCKER_HUB_TOKEN:
+        required: false
+
+permissions:
+  contents: read
+
+env:
+  DOCKER_HUB_USERNAME: stden
+
+jobs:
+  find-images:
+    name: Find images
+    runs-on: ubuntu-24.04
+    outputs:
+      images: ${{ steps.find.outputs.images }}
+    steps:
+      - name: 📥 Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: false
+
+      - name: 🔬 Check test-images.sh and publish-image.sh with a mock Docker
+        run: bash ci/test-smoke-failures.sh
+
+      - name: 🧪 Check compiler results, image layers, cleanup, and website failures
+        run: |
+          ci/heading.sh test "CI REGRESSION TESTS"
+          bash ci/test-compilers.sh
+          bash ci/test-extract-image.sh
+          bash ci/test-cleanup.sh
+          bash ci/test-free-runner-space.sh
+          python3 -m unittest discover -s ci -p test_python_app.py
+
+      - name: 🔎 Check hub_metadata.py and all Docker Hub overviews and categories
+        run: bash ci/check-hub-metadata.sh
+
+      - name: 📂 Find all top-level directories with a Dockerfile
+        id: find
+        run: bash ci/find-images.sh
+
+  build-and-publish:
+    name: ${{ matrix.image }}
+    needs: find-images
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    permissions:
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.find-images.outputs.images) }}
+    env:
+      IMAGE: ${{ matrix.image }}
+    steps:
+      - name: 📥 Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: false
+
+      - name: 🔎 On main, make sure the DOCKER_HUB_TOKEN secret is set
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+        run: bash ci/require-docker-hub-token.sh
+
+      - name: 🔐 On main, log in to Docker Hub as ${{ env.DOCKER_HUB_USERNAME }}
+        id: login
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6  # v4
+        with:
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: 🧹 For a large image, remove Android, .NET, and GHC to free disk space
+        if: contains(fromJSON('["latex", "cpp-cuda", "rust-ci", "rust-desktop", "web-qa", "document-tools", "open-webui"]'), matrix.image)
+        run: bash ci/free-runner-space.sh
+
+      - name: 📋 Show the Docker versions, the disk space, and the Dockerfile
+        run: bash ci/show-build-environment.sh
+
+      - name: 🔨 Build ${{ matrix.image }}:latest with --pull --no-cache
+        id: build
+        run: bash ci/build-image.sh
+
+      - name: 🛡️ Scan the built image for fixable HIGH and CRITICAL CVEs
+        id: scan
+        # A fixable HIGH or CRITICAL CVE fails this step, not the job. Every base image has
+        # some, so the job continues, publishes the image, and reports the CVEs to GitHub
+        # Security and the job summary. Remove this line to block the publication.
+        continue-on-error: true
+        # Pin this action to a full commit SHA for better supply-chain security.
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8  # v0.36.0
+        env:
+          TRIVY_DISABLE_TELEMETRY: 'true'
+          TRIVY_SKIP_VERSION_CHECK: 'true'
+        with:
+          scan-type: image
+          image-ref: ${{ matrix.image }}:latest
+          scanners: vuln
+          severity: CRITICAL,HIGH
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: os,library
+          format: sarif
+          limit-severities-for-sarif: true
+          output: trivy-results.sarif
+          timeout: 20m0s
+
+      - name: 📤 If a SARIF report exists, upload it to GitHub Security
+        id: sarif
+        # Upload the report even when the CVE scan fails.
+        if: ${{ !cancelled() && steps.scan.outcome != 'skipped' && hashFiles('trivy-results.sarif') != '' }}
+        uses: github/codeql-action/upload-sarif@793b778da9c9275a0f276522b27cb5fc14bba279  # v4
+        with:
+          sarif_file: trivy-results.sarif
+          category: trivy-${{ matrix.image }}
+
+      - name: 🧪 Run the smoke test with ./test-images.sh --no-build
+        id: test
+        run: bash ci/test-image.sh
+
+      - name: ☸️ For five images, deploy the manifests to a kind cluster
+        id: kubernetes
+        # kind deploys the Kubernetes manifests with the tested image. The open-webui
+        # image is too large for the disk of the runner, so test it locally.
+        if: contains(fromJSON('["graphify", "codegraph", "java-eks", "argocd", "crossplane"]'), matrix.image)
+        run: bash ci/test-image-kubernetes.sh
+
+      - name: 🚀 On main, push the tested image to ${{ env.DOCKER_HUB_USERNAME }}/${{ matrix.image }}:latest
+        id: publish
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          TARGET: ${{ env.DOCKER_HUB_USERNAME }}/${{ matrix.image }}:latest
+        run: bash ci/push-tested-image.sh
+
+      - name: 📝 On main, publish the Docker Hub overview and categories
+        id: overview
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+        run: python3 ci/hub_metadata.py "$IMAGE"
+
+      - name: 🩺 After a failure, show the container state and disk use
+        if: failure()
+        run: bash ci/show-image-failure.sh
+
+      - name: 📊 Write the step results, image size, and digest to the job summary
+        if: always()
+        env:
+          BUILD_RESULT: ${{ steps.build.outcome }}
+          SCAN_RESULT: ${{ steps.scan.outcome }}
+          SARIF_RESULT: ${{ steps.sarif.outcome }}
+          TEST_RESULT: ${{ steps.test.outcome }}
+          KUBERNETES_RESULT: ${{ steps.kubernetes.outcome }}
+          LOGIN_RESULT: ${{ steps.login.outcome }}
+          PUBLISH_RESULT: ${{ steps.publish.outcome }}
+          OVERVIEW_RESULT: ${{ steps.overview.outcome }}
+        run: bash ci/job-summary.sh >> "$GITHUB_STEP_SUMMARY"
