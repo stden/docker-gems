@@ -1,0 +1,59 @@
+stages:
+  - build
+
+variables:
+  DOCKER_HUB_USERNAME: stden
+  # Set the Docker Hub password as a CI/CD variable in GitLab.
+  # Name it DOCKER_HUB_PASSWORD (protected and masked).
+
+# Kaniko builds images without a Docker daemon. The project runners are not
+# privileged, so the docker:dind service cannot start on them.
+build_images:
+  stage: build
+  image:
+    name: ghcr.io/osscontainertools/kaniko:v1.28.6-debug
+    entrypoint: [""]
+  # Build, test, and push run in one job. Latex is large, and the test unpacks
+  # the image after Kaniko finishes, so the job takes more time than the build alone.
+  timeout: 3h
+  rules:
+    # Publish only from main: DOCKER_HUB_PASSWORD is a protected variable.
+    # Skip pushes that change only the top-level documentation and scripts.
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes: ["*/**/*", .gitlab-ci.yml]
+  script:
+    - mkdir -p /kaniko/.docker
+    - AUTH=$(printf '%s:%s' "$DOCKER_HUB_USERNAME" "$DOCKER_HUB_PASSWORD" | base64 | tr -d '\n')
+    - printf '{"auths":{"https://index.docker.io/v1/":{"auth":"%s"}}}' "$AUTH" > /kaniko/.docker/config.json
+    - |
+      # Every directory with a Dockerfile becomes stden/<directory>:latest.
+      # Kaniko writes the image to a tar. The smoke test runs that rootfs with
+      # PRoot. crane pushes the same tar only after the test exits 0.
+      # --cleanup resets the filesystem, so the next image starts clean.
+      # /cache is a mount, so the tar and the tools survive --cleanup.
+      set -eu
+      sh "$CI_PROJECT_DIR/ci/install-tools.sh"
+      tools=/cache/my-docker-images-tools
+      export JQ="$tools/jq"
+      export PROOT="$tools/proot"
+      export PROOT_TMP_DIR=/cache/my-docker-images-proot-tmp
+      export PATH="$tools:$PATH"
+      export DOCKER_CONFIG=/kaniko/.docker
+      mkdir -p "$PROOT_TMP_DIR"
+      work=/cache/my-docker-images-build
+      cleanup() { rm -rf "$work"; }
+      trap cleanup EXIT
+      for dockerfile in */Dockerfile; do
+        dir=${dockerfile%/Dockerfile}
+        rm -rf "$work"
+        mkdir -p "$work"
+        echo "Build $DOCKER_HUB_USERNAME/$dir:latest"
+        /kaniko/executor --context "$CI_PROJECT_DIR/$dir" --dockerfile "$CI_PROJECT_DIR/$dockerfile" \
+          --no-push --tarPath "$work/image.tar" --cleanup
+        echo "Test $dir"
+        sh "$CI_PROJECT_DIR/ci/test-built-image.sh" "$dir" "$work/image.tar" "$work/rootfs"
+        echo "Push $DOCKER_HUB_USERNAME/$dir:latest"
+        crane push "$work/image.tar" "$DOCKER_HUB_USERNAME/$dir:latest"
+        rm -rf "$work"
+        echo "OK $dir"
+      done

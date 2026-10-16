@@ -1,0 +1,192 @@
+name: Docker images
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+    paths:
+      - '*/**'
+      - .github/workflows/docker-images.yml
+      - docker-compose.yml
+      - test-images.sh
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Let each run finish before another run can update the same image tags.
+concurrency:
+  group: docker-images-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  DOCKER_HUB_USERNAME: stden
+
+jobs:
+  find-images:
+    name: Find images
+    runs-on: ubuntu-24.04
+    outputs:
+      images: ${{ steps.find.outputs.images }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Test runner
+        run: bash ci/test-smoke-failures.sh
+
+      - name: Check docs
+        run: |
+          python3 -m unittest discover -s ci -p test_hub_metadata.py
+          python3 ci/hub_metadata.py --check
+
+      - name: Find images
+        id: find
+        shell: bash
+        run: |
+          images=()
+          for dockerfile in */Dockerfile; do
+            [[ -f "$dockerfile" ]] || continue
+            images+=("${dockerfile%/Dockerfile}")
+          done
+          [[ ${#images[@]} -gt 0 ]]
+          printf 'images=%s\n' "$(jq -cn --args '$ARGS.positional' "${images[@]}")" >> "$GITHUB_OUTPUT"
+
+  build-and-publish:
+    name: ${{ matrix.image }}
+    needs: find-images
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ${{ fromJSON(needs.find-images.outputs.images) }}
+    env:
+      IMAGE: ${{ matrix.image }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Check token
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+        run: |
+          if [[ -z "$DOCKER_HUB_TOKEN" ]]; then
+            echo '::error::Set the DOCKER_HUB_TOKEN repository secret to a Docker Hub token with write access.'
+            exit 1
+          fi
+
+      - name: Docker login
+        id: login
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v4
+        with:
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+      - name: Free space
+        if: contains(fromJSON('["latex", "cpp-cuda", "rust-ci", "rust-desktop", "web-qa", "document-tools", "open-webui"]'), matrix.image)
+        run: |
+          # These tools are not necessary on this temporary GitHub runner.
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h /
+
+      - name: Environment
+        run: |
+          printf '\033[1;36mIMAGE: %s -> %s/%s:latest\033[0m\n' "$IMAGE" "$DOCKER_HUB_USERNAME" "$IMAGE"
+          echo '::group::Docker versions and disk space'
+          docker version
+          docker compose version
+          df -h /
+          echo '::endgroup::'
+          echo '::group::Dockerfile'
+          cat "$IMAGE/Dockerfile"
+          echo '::endgroup::'
+
+      - name: Build
+        id: build
+        run: |
+          printf '\033[1;36mBUILD: %s\033[0m\n' "$IMAGE"
+          docker build --progress=plain --pull --no-cache --tag "$IMAGE:latest" "$IMAGE"
+          printf '\033[1;32mBUILD PASSED: %s\033[0m\n' "$IMAGE"
+
+      - name: Test
+        id: test
+        run: |
+          printf '\033[1;33mTEST: %s\033[0m\n' "$IMAGE"
+          echo "::group::Smoke tests for $IMAGE"
+          ./test-images.sh --no-build "$IMAGE"
+          echo '::endgroup::'
+          printf '\033[1;32mTESTS PASSED: %s\033[0m\n' "$IMAGE"
+
+      - name: Kubernetes test
+        id: kubernetes
+        # kind deploys the Kubernetes manifests with the tested image. The open-webui
+        # image is too large for the disk of the runner, so test it locally.
+        if: contains(fromJSON('["graphify", "codegraph", "java-eks", "argocd", "crossplane"]'), matrix.image)
+        run: |
+          printf '\033[1;33mKUBERNETES TEST: %s\033[0m\n' "$IMAGE"
+          kind version
+          kubectl version --client
+          echo "::group::Deploy $IMAGE to a kind cluster"
+          bash ci/test-kubernetes.sh "$IMAGE"
+          echo '::endgroup::'
+          printf '\033[1;32mKUBERNETES TEST PASSED: %s\033[0m\n' "$IMAGE"
+
+      - name: Push
+        id: publish
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          target="$DOCKER_HUB_USERNAME/$IMAGE:latest"
+          printf '\033[1;36mPUBLISH: %s\033[0m\n' "$target"
+          echo "::group::Push the tested image to $target"
+          docker tag "$IMAGE:latest" "$target"
+          docker push "$target"
+          echo '::endgroup::'
+          printf '\033[1;32mPUBLISHED: %s\033[0m\n' "$target"
+
+      - name: Overview
+        id: overview
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+        run: python3 ci/hub_metadata.py "$IMAGE"
+
+      - name: Diagnostics
+        if: failure()
+        run: |
+          printf '\033[1;31mFAILED: %s. Check the failed step above.\033[0m\n' "$IMAGE"
+          echo "::error title=Image job failed::The $IMAGE job failed. Check the build or test output above."
+          echo '::group::Container state and disk use'
+          docker ps -a
+          docker system df
+          df -h /
+          echo '::endgroup::'
+
+      - name: Summary
+        if: always()
+        env:
+          BUILD_RESULT: ${{ steps.build.outcome }}
+          TEST_RESULT: ${{ steps.test.outcome }}
+          KUBERNETES_RESULT: ${{ steps.kubernetes.outcome }}
+          LOGIN_RESULT: ${{ steps.login.outcome }}
+          PUBLISH_RESULT: ${{ steps.publish.outcome }}
+          OVERVIEW_RESULT: ${{ steps.overview.outcome }}
+        run: |
+          {
+            printf '## Docker image: %s\n\n' "$IMAGE"
+            printf '| Step | Result |\n| --- | --- |\n'
+            printf '| Build | %s |\n' "$BUILD_RESULT"
+            printf '| Smoke tests | %s |\n' "$TEST_RESULT"
+            printf '| Kubernetes test | %s |\n' "$KUBERNETES_RESULT"
+            printf '| Docker Hub login | %s |\n' "$LOGIN_RESULT"
+            printf '| Publish | %s |\n' "$PUBLISH_RESULT"
+            printf '| Overview and categories | %s |\n\n' "$OVERVIEW_RESULT"
+            printf 'Target: %s/%s:latest\n\n' "$DOCKER_HUB_USERNAME" "$IMAGE"
+            printf '[Open Docker Hub](https://hub.docker.com/r/%s/%s)\n' "$DOCKER_HUB_USERNAME" "$IMAGE"
+          } >> "$GITHUB_STEP_SUMMARY"

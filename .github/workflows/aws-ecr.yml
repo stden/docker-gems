@@ -1,0 +1,56 @@
+name: Copy images to Amazon ECR
+
+# Copy tested images from Docker Hub to Amazon ECR. Start it by hand from main.
+# It must have the repository variables AWS_ROLE_ARN and AWS_REGION, and an IAM role
+# for GitHub OIDC. aws/README.md shows the setup. GitHub stores no AWS key.
+on:
+  workflow_dispatch:
+    inputs:
+      images:
+        description: Image directories, separated by spaces
+        required: true
+        default: open-webui graphify codegraph java-eks
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aws-ecr
+  cancel-in-progress: false
+
+jobs:
+  copy:
+    name: Copy to ECR
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Check settings
+        env:
+          AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: |
+          if [[ -z "$AWS_ROLE_ARN" || -z "$AWS_REGION" ]]; then
+            echo '::error::Set the repository variables AWS_ROLE_ARN and AWS_REGION. See aws/README.md.'
+            exit 1
+          fi
+
+      - name: AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Copy images
+        env:
+          IMAGES: ${{ inputs.images }}
+        run: |
+          read -ra images <<< "$IMAGES"
+          bash aws/copy-to-ecr.sh "${images[@]}"

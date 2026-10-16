@@ -1,0 +1,39 @@
+name: Hub pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Share the concurrency group of the image workflow, so that an older run cannot
+# overwrite newer pages.
+concurrency:
+  group: docker-images-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  overviews:
+    name: Overviews
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Check docs
+        run: |
+          python3 -m unittest discover -s ci -p test_hub_metadata.py
+          python3 ci/hub_metadata.py --check
+
+      - name: Publish
+        env:
+          DOCKER_HUB_USERNAME: stden
+          DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
+        run: |
+          for dockerfile in */Dockerfile; do
+            python3 ci/hub_metadata.py "${dockerfile%/Dockerfile}"
+          done
