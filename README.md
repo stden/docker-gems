@@ -35,10 +35,26 @@ Store data in a volume or a host directory to keep it after you remove the conta
 
 ```mermaid
 flowchart LR
-  df["Dockerfile"] --> image["Image"]
-  image --> container["Container"]
-  store["Volume or host directory"] --- container
-  hub["Docker Hub"] --> image
+  df["Dockerfile<br/>Build instructions"]:::source
+  hub["Docker Hub<br/>Image registry"]:::registry
+  image["Image<br/>Files and start command"]:::image
+  container(["Container<br/>Process from the image"]):::container
+  store[("Volume or host directory<br/>Persistent data")]:::storage
+
+  df -->|"docker build"| image
+  hub -->|"docker pull"| image
+  image -->|"docker run"| container
+  store -.->|"--mount"| container
+
+  classDef source fill:#dbeafe,stroke:#2563eb,color:#172554,stroke-width:2px
+  classDef registry fill:#cffafe,stroke:#0891b2,color:#164e63,stroke-width:2px
+  classDef image fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:2px
+  classDef container fill:#dcfce7,stroke:#16a34a,color:#14532d,stroke-width:2px
+  classDef storage fill:#ede9fe,stroke:#7c3aed,color:#4c1d95,stroke-width:2px
+  linkStyle 0 stroke:#2563eb,stroke-width:2px
+  linkStyle 1 stroke:#0891b2,stroke-width:2px
+  linkStyle 2 stroke:#16a34a,stroke-width:2px
+  linkStyle 3 stroke:#7c3aed,stroke-width:2px
 ```
 
 | Term | What it is |
