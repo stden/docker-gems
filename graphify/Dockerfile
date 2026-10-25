@@ -3,6 +3,10 @@ FROM python:latest
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 
+# Install the security updates of the base image. The official image can be days
+# behind the security repository of the distribution.
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
+
 # Code extraction is offline. The extras add the MCP server, watch mode, Leiden
 # clustering, PDF, Office, SQL, and SVG support, and the Anthropic and OpenAI
 # clients for document extraction. The "all" extra does not install on the

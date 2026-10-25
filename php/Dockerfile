@@ -27,11 +27,14 @@ ENV COMPOSER_ALLOW_SUPERUSER=1 \
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 COPY --from=phpunit /usr/local/bin/phpunit /usr/local/bin/phpunit
 
-# Composer must have git and unzip. Install a PHP extension only when this
-# base image does not have it. The purge keeps the runtime libraries.
+# Install the security updates of the base image. The official image can be days
+# behind the security repository of the distribution. Composer must have git and
+# unzip. Install a PHP extension only when this base image does not have it. The
+# purge keeps the runtime libraries.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN set -eux; \
     apt-get update; \
+    apt-get upgrade -y; \
     apt-get install -y --no-install-recommends git unzip; \
     savedAptMark="$(apt-mark showmanual)"; \
     need_dev=0; \

@@ -5,14 +5,16 @@ set -euo pipefail
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
 WORK=$(mktemp -d)
-CONTAINER=docker-gems-ecr-test
 cleanup() {
-  docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
+  if [[ -s "$WORK/registry.cid" ]]; then
+    docker rm -f "$(cat "$WORK/registry.cid")" >/dev/null 2>&1 || true
+  fi
   rm -rf "$WORK"
 }
 trap cleanup EXIT
 
-docker run -d --name "$CONTAINER" -p 127.0.0.1::5000 registry:3 >/dev/null
+docker run -d --cidfile "$WORK/registry.cid" -p 127.0.0.1::5000 registry:3 >/dev/null
+CONTAINER=$(cat "$WORK/registry.cid")
 port=$(docker port "$CONTAINER" 5000/tcp | sed -n 1p | sed 's/.*://')
 export REGISTRY="127.0.0.1:$port" TRACE="$WORK/trace" STATE="$WORK/state"
 mkdir -p "$WORK/bin" "$STATE"

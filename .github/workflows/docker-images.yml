@@ -28,6 +28,14 @@ jobs:
       - name: 🔬 Check test-images.sh and publish-image.sh with a mock Docker
         run: bash ci/test-smoke-failures.sh
 
+      - name: 🧪 Check image layers, resource cleanup, and website failures
+        run: |
+          ci/heading.sh test "CI REGRESSION TESTS"
+          bash ci/test-extract-image.sh
+          bash ci/test-cleanup.sh
+          bash ci/test-free-runner-space.sh
+          python3 -m unittest discover -s ci -p test_python_app.py
+
       - name: 🔎 Check hub_metadata.py and all Docker Hub overviews and categories
         run: bash ci/check-hub-metadata.sh
 

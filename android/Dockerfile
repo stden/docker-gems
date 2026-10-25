@@ -14,14 +14,25 @@ ARG AGP_BUILD_TOOLS_VERSION=36.0.0
 # Gradle for projects without a wrapper. The checksum is from services.gradle.org.
 ARG GRADLE_VERSION=9.8.2
 ARG GRADLE_SHA256=21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
+# The command-line tools 22.0 contain Bouncy Castle 1.79 with known vulnerabilities.
+# Replace it with the newest release for the lint, apkanalyzer, and resourceshrinker
+# launchers. The checksums are from Maven Central (<artifact>-<version>.jar.sha256).
+ARG BC_OLD_VERSION=1.79
+ARG BC_VERSION=1.86
+ARG BCPROV_SHA256=2af190b300cbb0b35e248ccf5f4a06b6072030aeb3da7a98ec73abe5b4cb371f
+ARG BCPKIX_SHA256=8d8b41a4b149bdae8d331f059a578870954d1e3ff29f8269a9eb3ee19a7e4ef7
+ARG BCUTIL_SHA256=1c268e15f785aafb1e4670d8d6e5f856f69475e96c162dadcd1ff9b350e9139f
 
 ENV ANDROID_HOME=/opt/android-sdk \
     ANDROID_SDK_ROOT=/opt/android-sdk \
     GRADLE_HOME=/opt/gradle
 ENV PATH="${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/build-tools/${BUILD_TOOLS_VERSION}:${GRADLE_HOME}/bin:${PATH}"
 
+# Install the security updates of the base image and the download tools. The official
+# image can be days behind the security repository of Ubuntu.
 RUN test "$(dpkg --print-architecture)" = amd64 \
  && apt-get update \
+ && apt-get upgrade -y \
  && apt-get install -y --no-install-recommends ca-certificates curl git unzip \
  && rm -rf /var/lib/apt/lists/*
 
@@ -52,11 +63,39 @@ RUN set -eux; \
       "platforms;android-37.0" "platforms;android-37.2"; \
     rm -rf "${ANDROID_HOME}/.temp" /root/.android /root/.java
 
+# Replace the Bouncy Castle jars of the command-line tools. The lint, apkanalyzer, and
+# resourceshrinker launchers read their class path from the manifest of
+# lib/<launcher>-classpath.jar, which names the path of each jar.
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN set -eux; \
+    lib="${ANDROID_HOME}/cmdline-tools/latest/lib"; \
+    for artifact in bcprov bcpkix bcutil; do \
+      curl -fsSLo "/tmp/${artifact}.jar" \
+        "https://repo1.maven.org/maven2/org/bouncycastle/${artifact}-jdk18on/${BC_VERSION}/${artifact}-jdk18on-${BC_VERSION}.jar"; \
+    done; \
+    printf '%s  /tmp/bcprov.jar\n%s  /tmp/bcpkix.jar\n%s  /tmp/bcutil.jar\n' \
+      "${BCPROV_SHA256}" "${BCPKIX_SHA256}" "${BCUTIL_SHA256}" | sha256sum --check; \
+    for artifact in bcprov bcpkix bcutil; do \
+      rm -r "${lib}/external/org/bouncycastle/${artifact}-jdk18on/${BC_OLD_VERSION}"; \
+      mkdir "${lib}/external/org/bouncycastle/${artifact}-jdk18on/${BC_VERSION}"; \
+      mv "/tmp/${artifact}.jar" \
+        "${lib}/external/org/bouncycastle/${artifact}-jdk18on/${BC_VERSION}/${artifact}-jdk18on-${BC_VERSION}.jar"; \
+    done; \
+    for launcher in apkanalyzer lint resourceshrinker; do \
+      unzip -p "${lib}/${launcher}-classpath.jar" META-INF/MANIFEST.MF \
+        | sed "s#\(bc[a-z]*-jdk18on\)/${BC_OLD_VERSION}/\(bc[a-z]*-jdk18on\)-${BC_OLD_VERSION}\.jar#\1/${BC_VERSION}/\2-${BC_VERSION}.jar#g" \
+        > /tmp/MANIFEST.MF; \
+      test "$(grep -c "jdk18on-${BC_VERSION}.jar" /tmp/MANIFEST.MF)" = 3; \
+      jar --update --file "${lib}/${launcher}-classpath.jar" --manifest /tmp/MANIFEST.MF; \
+    done; \
+    rm /tmp/MANIFEST.MF
+
 RUN java -version \
  && GRADLE_USER_HOME=/tmp/gradle-version gradle --version \
  && rm -rf /tmp/gradle-version \
  && sdkmanager --version \
  && sdkmanager --list_installed \
+ && lint --version \
  && aapt2 version \
  && apksigner --version \
  && adb version \

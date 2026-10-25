@@ -7,6 +7,7 @@ Build C++ and CUDA programs with the NVIDIA CUDA development toolkit.
 This image uses the NVIDIA CUDA development image for Ubuntu.
 It includes `nvcc`, C++ build tools, CMake, Ninja, ccache, Git, and OpenSSL headers.
 You can compile and link CUDA programs without a GPU.
+The image has no Nsight Compute profiler. The course does not use it.
 The default working directory is `/workspace`. The default command is Bash.
 
 ## Tags

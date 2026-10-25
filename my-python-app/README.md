@@ -11,6 +11,8 @@ Learn Docker networking with a Python website check and a MySQL query.
 
 The working directory is `/x`. The default command runs `python ./my-test.py`.
 It requests `https://www.google.com`, then queries the `user` table in the database.
+Requests use a 15-second timeout. A failed website check stops the program before the database query.
+
 It runs once and exits. It does not start a web server.
 
 ## Tags

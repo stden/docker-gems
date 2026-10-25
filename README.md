@@ -18,7 +18,7 @@ Follow these sections:
 
 1. [Learn the Docker terms](#how-docker-works).
 2. [Install Docker](#install-and-set-up-docker).
-3. [Scan and maintain Docker images](#docker-image-security--maintenance).
+3. [Scan and maintain Docker images](#image-security-and-maintenance).
 4. [Build and publish an image](#tutorial-build-test-and-publish-an-image).
 5. [Run an application](#tutorial-run-a-local-api).
 6. [Run Python and MySQL with Compose](#docker-compose-python-and-mysql).
@@ -444,7 +444,7 @@ See [GitHub's secret instructions](https://docs.github.com/en/actions/how-tos/wr
 To run the workflow manually, open **Actions → Docker security scan → Run workflow**.
 Select `main` to publish the images.
 
-For local scans and dependency updates, see [Docker Image Security & Maintenance](#docker-image-security--maintenance).
+For local scans and dependency updates, see [Image security and maintenance](#image-security-and-maintenance).
 
 ### Maintain Docker Hub overviews
 

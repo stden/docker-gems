@@ -28,8 +28,11 @@ RUN release=$(curl -fsSL https://ffmpeg.org/download.html \
 
 FROM python:latest
 
+# Install the security updates of the base image first. The official image can be
+# days behind the security repository of the distribution.
 # The -dev names remain valid when Debian updates codec library versions.
 RUN apt-get update \
+ && apt-get upgrade -y \
  && apt-get install -y --no-install-recommends \
       libmp3lame-dev libopus-dev libvpx-dev libx264-dev \
  && rm -rf /var/lib/apt/lists/*

@@ -114,6 +114,9 @@ This repository contains Docker images and examples for a QA course. Every agent
     fails offline. Check each new release.
   - `php/Dockerfile`: the fingerprint of the PHPUnit signing key. The build checks the PHAR signature
     with it. Change it only when PHPUnit announces a new key.
+  - `open-webui/Dockerfile`: keep TorchAudio compatible with the upstream Torch CPU runtime.
+    Before Torch 2.11, use the same release. With Torch 2.11 or later, use TorchAudio 2.11 patch releases.
+    Keep the native import and CPU resample checks in `open-webui/smoke-test.sh`.
   - `crossplane/kubernetes/providers.yaml`: the AWS provider packages. Use the same newest
     release for `provider-family-aws` and each service provider.
 - For `web-qa`, install Playwright. Then install the browser revision of this Playwright release
@@ -402,6 +405,10 @@ follow the section "Check images for known CVEs". Before you commit:
    actionlint .github/workflows/docker-security-scan.yml
    actionlint .github/workflows/docker-hub.yml
    bash ci/test-smoke-failures.sh
+   bash ci/test-cleanup.sh
+   bash ci/test-free-runner-space.sh
+   bash ci/test-extract-image.sh
+   python3 -m unittest discover -s ci -p test_python_app.py
    python3 -m unittest discover -s ci -p test_hub_metadata.py
    python3 ci/hub_metadata.py --check
    ```
@@ -582,9 +589,12 @@ the manifests are in "Kubernetes manifests" above.
 - `.github/workflows/aws-ecr.yml` copies images to Amazon ECR. It runs only by hand from
   `main`. Only its job has `id-token: write`, for GitHub OIDC. It must have the repository
   variables `AWS_ROLE_ARN` and `AWS_REGION`. Do not store an AWS access key in GitHub.
-- Keep the concurrency group. Runs for the same branch must not publish at the same time.
+- Keep the concurrency group. A newer image run for the same branch stops the older image run.
+  Hub pages wait in that group. They do not stop an image run.
+  The runs do not publish at the same time.
+  A newer ECR copy stops the older ECR copy.
 - The jobs for large images remove unused tools from their temporary runners to make space for
-  the image.
+  the image. Delete the Android, .NET, and GHC directories at the same time.
 
 ## GitLab CI
 

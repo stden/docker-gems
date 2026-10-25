@@ -14,9 +14,10 @@ on:
 permissions:
   contents: read
 
+# A newer copy stops the older copy. The two copies do not run at the same time.
 concurrency:
   group: aws-ecr
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   copy:

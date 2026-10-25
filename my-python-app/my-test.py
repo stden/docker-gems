@@ -6,16 +6,20 @@ import mysql.connector as db
 import requests
 
 
+REQUEST_TIMEOUT_SECONDS = 15
+
+
 # Check the web page status.
 def check_website(url):
     try:
-        response = requests.get(url)  # Send a GET request.
+        response = requests.get(url, timeout=REQUEST_TIMEOUT_SECONDS)  # Send a GET request.
         # Print the response status code.
         print(f'Response status code for {url}: {response.status_code}')
         assert response.status_code == 200, 'Expected HTTP 200'
     except requests.exceptions.RequestException as e:
         # If the request fails, print a message.
         print(f'Request to {url} failed: {e}')
+        raise
 
 
 def my_db():

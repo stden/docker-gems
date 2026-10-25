@@ -212,6 +212,43 @@ for scenario in publish_feature publish_detached; do
   fi
 done
 
+for image in compilers cpp java java-run-swing java-ui-browser latex my-python-app python rust; do
+  : >"$TRACE"
+  if SCENARIO=publish_feature bash "$ROOT/$image/up.sh" >"$WORK/output" 2>&1; then
+    echo "FAIL ${image}_publish_feature: publication was allowed outside main"
+    failures=$((failures + 1))
+  elif [[ -s "$TRACE" ]] || ! grep -Fxq 'Publish images only from the main branch.' "$WORK/output"; then
+    echo "FAIL ${image}_publish_feature: the branch check did not stop before the build"
+    failures=$((failures + 1))
+  else
+    echo "PASS ${image}_publish_feature"
+  fi
+done
+
+: >"$TRACE"
+if SCENARIO=success GITHUB_ACTIONS='' bash "$ROOT/java/up.sh" >"$WORK/output" 2>&1; then
+  if ! grep -Fxq "build --pull --no-cache --tag java:latest $ROOT/java" "$TRACE" \
+    || ! grep -Fxq 'push stden/java:latest' "$TRACE"; then
+    echo 'FAIL legacy_publish_main: the build or push command is incorrect'
+    failures=$((failures + 1))
+  else
+    echo 'PASS legacy_publish_main'
+  fi
+else
+  echo 'FAIL legacy_publish_main: publication from main failed'
+  cat "$WORK/output"
+  failures=$((failures + 1))
+fi
+
+: >"$TRACE"
+if SCENARIO=run_failure GITHUB_ACTIONS='' bash "$ROOT/java/up.sh" >"$WORK/output" 2>&1 \
+  || grep -Eq '^(tag|push) ' "$TRACE"; then
+  echo 'FAIL legacy_publish_failure: a failed test did not stop publication'
+  failures=$((failures + 1))
+else
+  echo 'PASS legacy_publish_failure'
+fi
+
 if ((failures)); then
   echo "$failures smoke runner checks failed."
   exit 1

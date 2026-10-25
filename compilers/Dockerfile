@@ -2,9 +2,12 @@
 # The official Mono image no longer receives updates.
 FROM debian:stable-slim
 
+# Install the security updates of the base image. The official image can be days
+# behind the security repository of the distribution.
 # Install LaTeX, C++, C# (Mono), Free Pascal, Python, and tree.
 # Download the latest DMD compiler from dlang.org.
 RUN apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
     texlive texlive-latex-extra texlive-fonts-recommended \
     g++ fp-compiler mono-mcs \

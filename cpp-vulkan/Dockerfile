@@ -1,6 +1,9 @@
 FROM ubuntu:latest
 
+# Install the security updates of the base image. The official image can be days
+# behind the security repository of the distribution.
 RUN apt-get update \
+    && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
         build-essential \
         ca-certificates \

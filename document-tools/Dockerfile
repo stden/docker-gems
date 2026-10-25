@@ -8,7 +8,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
 
+# Install the security updates of the base image first. The official image can be
+# days behind the security repository of the distribution.
 RUN apt-get update \
+ && apt-get upgrade -y \
  && apt-get install -y --no-install-recommends \
       ca-certificates curl fontconfig fonts-dejavu fonts-liberation poppler-utils \
       libxinerama1 libdbus-1-3 libcups2t64 libx11-xcb1 \

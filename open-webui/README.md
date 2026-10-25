@@ -5,7 +5,8 @@ Run Open WebUI, a self-hosted chat interface for Ollama and OpenAI-compatible AP
 ## Overview
 
 This image is the official [Open WebUI](https://github.com/open-webui/open-webui)
-image `ghcr.io/open-webui/open-webui:latest`. The Dockerfile uses it without changes.
+image `ghcr.io/open-webui/open-webui:latest` with operating system and Python security updates.
+It selects a TorchAudio CPU wheel that is compatible with the upstream Torch runtime.
 Each build pulls the newest release, runs the smoke test, and publishes the tested image.
 
 Open WebUI gives a web chat for local models in Ollama and for OpenAI-compatible
@@ -131,7 +132,8 @@ for Amazon EKS.
 ## Source and checks
 
 The smoke test starts the server with a temporary data directory and without a
-model backend. It checks `/health`, the configuration, the web page, and the first
+model backend. It first checks the TorchAudio import and audio resample on the CPU.
+It checks `/health`, the configuration, the web page, and the first
 sign-up as administrator. It also checks an authenticated session, the models API,
 and that a request without a token fails.
 

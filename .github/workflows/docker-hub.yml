@@ -6,8 +6,9 @@ on:
 permissions:
   contents: read
 
-# Share the concurrency group of the image workflow, so that an older run cannot
-# overwrite newer pages.
+# Share the concurrency group of the image workflow.
+# Hub pages wait for an image run. They do not stop that run.
+# An older run cannot overwrite newer pages.
 concurrency:
   group: docker-images-${{ github.ref }}
   cancel-in-progress: false

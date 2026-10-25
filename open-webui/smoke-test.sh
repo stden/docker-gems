@@ -32,6 +32,17 @@ mkdir -p "$DATA_DIR"
 url="http://127.0.0.1:$PORT"
 
 python --version
+python - <<'PY'
+import torch
+import torchaudio
+
+waveform = torch.linspace(-1, 1, 160).unsqueeze(0)
+resampled = torchaudio.functional.resample(waveform, 16000, 8000)
+assert tuple(resampled.shape) == (1, 80)
+assert torch.isfinite(resampled).all()
+print(f"Torch {torch.__version__} and TorchAudio {torchaudio.__version__}: CPU resample passed.")
+PY
+
 bash /app/backend/start.sh > "$work/server.log" 2>&1 &
 server_pid=$!
 for _attempt in {1..180}; do

@@ -11,6 +11,9 @@ Valgrind, Git, sshpass, and tree.
 Use it for LaTeX course documents and for projects that have documents and C++
 examples. The full TeX Live distribution makes this a large image.
 
+The build removes the TeX Live Java tools tlcockpit, texplate, and latex2nemeth.
+The course does not use them, and their jar files have old libraries with known CVEs.
+
 ## Tags
 
 | Tag | Meaning | Platform |

@@ -2,9 +2,9 @@ package com.example.demo.controller;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 @Tag(name = "Product API", description = "Operations for product management")
 public class ProductController {
 
-    private final Map<Long, Product> productDB = new HashMap<>();
+    private final ConcurrentMap<Long, Product> productDB = new ConcurrentHashMap<>();
     private final AtomicLong idCounter = new AtomicLong(1);
 
     // Initialize with some sample data
@@ -106,11 +106,10 @@ public class ProductController {
             @Parameter(description = "ID of the product to update") 
             @PathVariable Long id, 
             @Valid @RequestBody Product product) {
-        if (!productDB.containsKey(id)) {
+        product.setId(id);
+        if (productDB.replace(id, product) == null) {
             return ResponseEntity.notFound().build();
         }
-        product.setId(id);
-        productDB.put(id, product);
         return ResponseEntity.ok(product);
     }
 
@@ -123,10 +122,9 @@ public class ProductController {
     public ResponseEntity<Void> deleteProduct(
             @Parameter(description = "ID of the product to delete") 
             @PathVariable Long id) {
-        if (!productDB.containsKey(id)) {
+        if (productDB.remove(id) == null) {
             return ResponseEntity.notFound().build();
         }
-        productDB.remove(id);
         return ResponseEntity.noContent().build();
     }
     

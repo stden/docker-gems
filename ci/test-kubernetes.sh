@@ -7,10 +7,11 @@
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
-CLUSTER=docker-gems-test
-TAG=kind-test
 KEY=docker-gems-kind-test
 WORK=$(mktemp -d)
+CLUSTER="docker-gems-test-$(printf '%s' "${WORK##*.}" | tr '[:upper:]' '[:lower:]')"
+TAG=$CLUSTER
+cluster_started=false
 export KUBECONFIG="$WORK/kubeconfig"
 IMAGES=()
 SELECTED=()
@@ -18,7 +19,7 @@ SELECTED=()
 cleanup() {
   local status=$?
   local image
-  if [[ "$status" != 0 && -s "$KUBECONFIG" ]]; then
+  if [[ "$cluster_started" == true && "$status" != 0 && -s "$KUBECONFIG" ]]; then
     echo "Cluster state after the failure:" >&2
     kubectl get pods,jobs,pvc -A -o wide >&2 || true
     kubectl get events -A --sort-by=.lastTimestamp 2>/dev/null | tail -n 40 >&2 || true
@@ -27,7 +28,9 @@ cleanup() {
         --all-containers --prefix --tail=40 >&2 || true
     done
   fi
-  kind delete cluster --name "$CLUSTER" >/dev/null 2>&1 || true
+  if [[ "$cluster_started" == true ]]; then
+    kind delete cluster --name "$CLUSTER" >/dev/null 2>&1 || true
+  fi
   for image in "${IMAGES[@]}"; do
     docker rmi "$image:$TAG" >/dev/null 2>&1 || true
   done
@@ -286,7 +289,14 @@ main() {
   command -v kubectl >/dev/null
   command -v jq >/dev/null
 
-  kind delete cluster --name "$CLUSTER" >/dev/null 2>&1 || true
+  local clusters
+  clusters=$(kind get clusters)
+  if grep -Fxq "$CLUSTER" <<< "$clusters"; then
+    echo "Cluster already exists: $CLUSTER" >&2
+    exit 1
+  fi
+  # If cluster creation fails, remove partial nodes under this unique cluster name.
+  cluster_started=true
   kind create cluster --name "$CLUSTER" --kubeconfig "$KUBECONFIG" --wait 180s
   for image in "$@"; do
     deploy "$image"

@@ -10,11 +10,13 @@ on:
 permissions:
   contents: read
 
-# The same group as the Hub pages workflow. Runs for the same branch must not publish at
-# the same time. The group of the called workflow does not apply to this run.
+# The same group as the Hub pages workflow. A newer run for the same branch
+# stops the older image run and a Hub pages run in this group.
+# The two image runs do not publish at the same time.
+# The group of the called workflow does not apply to this run.
 concurrency:
   group: docker-images-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   images:
