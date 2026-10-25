@@ -53,7 +53,7 @@ This repository contains Docker images and examples for a QA course. Every agent
 - `r.sh` and `r.cmd` (in some images) — build and run locally.
 - `kubernetes/` (in some images) — manifests for Kubernetes and EKS, with a `kustomization.yaml`
   that sets the namespace and a `namespace.yaml` with Pod Security labels. See "Kubernetes manifests".
-- The eighteen shared tool images have a self-contained `smoke-test.sh`.
+- The nineteen shared tool images have a self-contained `smoke-test.sh`.
   Both CI runners mount this file and run it with Bash. Keep the test files outside the built image.
   Their `up.sh` and `up.cmd` scripts call `ci/publish-image.sh`. This script must run on `main`.
   It stops before publication if a test fails.
@@ -346,7 +346,7 @@ follow the section "Check images for known CVEs". Before you commit:
 
    | Image            | Smoke test                                                                                     |
    |------------------|------------------------------------------------------------------------------------------------|
-   | `compilers`      | `docker run --rm compilers:test` prints five `== Program in ...` blocks                      |
+   | `compilers`      | Run seven Hello world programs and compile two LaTeX documents. Check all nine results. |
    | `cpp`            | Compile a file with `g++ --coverage`, run it, then `gcovr` and `valgrind --error-exitcode=1`   |
    | `java`           | `docker run --rm java:test bash -c 'java -version && mvn -version'` prints Java 25 and Maven 3 |
    | `java-eks`       | `mvn -B verify` (below), then run the container and get HTTP 200 from `/api/health`, `/api-docs` and `/swagger-ui/index.html` |
@@ -405,6 +405,7 @@ follow the section "Check images for known CVEs". Before you commit:
    actionlint .github/workflows/docker-security-scan.yml
    actionlint .github/workflows/docker-hub.yml
    bash ci/test-smoke-failures.sh
+   bash ci/test-compilers.sh
    bash ci/test-cleanup.sh
    bash ci/test-free-runner-space.sh
    bash ci/test-extract-image.sh

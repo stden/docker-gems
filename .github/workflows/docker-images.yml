@@ -28,9 +28,10 @@ jobs:
       - name: 🔬 Check test-images.sh and publish-image.sh with a mock Docker
         run: bash ci/test-smoke-failures.sh
 
-      - name: 🧪 Check image layers, resource cleanup, and website failures
+      - name: 🧪 Check compiler results, image layers, cleanup, and website failures
         run: |
           ci/heading.sh test "CI REGRESSION TESTS"
+          bash ci/test-compilers.sh
           bash ci/test-extract-image.sh
           bash ci/test-cleanup.sh
           bash ci/test-free-runner-space.sh

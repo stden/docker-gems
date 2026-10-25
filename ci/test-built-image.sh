@@ -89,15 +89,9 @@ case $NAME in
     run --user "$user" --bind "$HERE/../$NAME/smoke-test.sh:/tmp/docker-gems-smoke.sh" \
       -- bash /tmp/docker-gems-smoke.sh
     ;;
-  allure|android|argocd|code-quality|codegraph|cpp-cuda|cpp-vulkan|crossplane|document-tools|graphify|open-webui|php|python-media|rust-ci|rust-desktop|rust-node|web-qa)
+  allure|android|argocd|code-quality|codegraph|compilers|cpp-cuda|cpp-vulkan|crossplane|document-tools|graphify|open-webui|php|python-media|rust-ci|rust-desktop|rust-node|web-qa)
     run --bind "$HERE/../$NAME/smoke-test.sh:/tmp/docker-gems-smoke.sh" \
       -- bash /tmp/docker-gems-smoke.sh
-    ;;
-  compilers)
-    capture -- /x/test.sh
-    printf '%s\n' "$output"
-    count=$(printf '%s\n' "$output" | grep -c '== Program in ' || true)
-    [ "$count" -eq 5 ]
     ;;
   cpp)
     src=$(mktemp -d)

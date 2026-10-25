@@ -89,16 +89,6 @@ expect_lines() {
   done
 }
 
-test_compilers() {
-  build_image compilers
-  echo "Run the C++, C#, D, Pascal, and Python programs"
-  local output count
-  output=$(docker run --rm "compilers:${IMAGE_TAG}") || { printf '%s\n' "$output" >&2; return 1; }
-  printf '%s\n' "$output"
-  count=$(printf '%s\n' "$output" | grep -c '== Program in ' || true)
-  [[ "$count" -eq 5 ]]
-}
-
 test_cpp() {
   build_image cpp
   echo "Compile C++, run the program, and check gcovr and Valgrind"
@@ -319,7 +309,6 @@ test_shared() {
 run_image() {
   local name=$1
   case "$name" in
-    compilers) test_compilers ;;
     cpp) test_cpp ;;
     java) test_java ;;
     java-eks) test_java_eks ;;
@@ -329,7 +318,7 @@ run_image() {
     my-python-app) test_my_python_app ;;
     python) test_python ;;
     rust) test_rust ;;
-    allure|android|argocd|code-quality|codegraph|cpp-cuda|cpp-vulkan|crossplane|document-tools|graphify|open-webui|php|postgres-vector-graph|python-media|rust-ci|rust-desktop|rust-node|web-qa)
+    allure|android|argocd|code-quality|codegraph|compilers|cpp-cuda|cpp-vulkan|crossplane|document-tools|graphify|open-webui|php|postgres-vector-graph|python-media|rust-ci|rust-desktop|rust-node|web-qa)
       test_shared "$name"
       ;;
     *) return 2 ;;

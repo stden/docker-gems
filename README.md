@@ -73,7 +73,7 @@ Images
 
 | Image overview | Base image | Contents | Docker Hub | Search categories |
 | --- | --- | --- | --- | --- |
-| [`compilers`](compilers/README.md) | `debian:stable-slim` | C++ (g++), C# (Mono), D (DMD), Free Pascal, Python 3 with numpy and pandas, LaTeX | [Overview](https://hub.docker.com/r/stden/compilers) · [Tags](https://hub.docker.com/r/stden/compilers/tags) | Languages & frameworks, Developer tools |
+| [`compilers`](compilers/README.md) | `debian:stable-slim` | C (GCC), C++ (g++), C# (Mono), D (DMD), Haskell (GHC), Free Pascal, Python 3 with NumPy and pandas, LaTeX | [Overview](https://hub.docker.com/r/stden/compilers) · [Tags](https://hub.docker.com/r/stden/compilers/tags) | Languages & frameworks, Developer tools |
 | [`cpp`](cpp/README.md) | `gcc:latest` | GCC, CMake, code coverage (gcovr, lcov), memory checks (valgrind) | [Overview](https://hub.docker.com/r/stden/cpp) · [Tags](https://hub.docker.com/r/stden/cpp/tags) | Developer tools, Languages & frameworks |
 | [`java`](java/README.md) | `maven:3-amazoncorretto-25` | JDK 25 (LTS) and Maven for Java builds and tests | [Overview](https://hub.docker.com/r/stden/java) · [Tags](https://hub.docker.com/r/stden/java/tags) | Languages & frameworks, Developer tools, Integration & delivery |
 | [`java-eks`](java-eks/README.md) | `amazoncorretto:25` | A Spring Boot 4 REST API for AWS EKS. See [java-eks/README.md](java-eks/README.md). | [Overview](https://hub.docker.com/r/stden/java-eks) · [Tags](https://hub.docker.com/r/stden/java-eks/tags) | Languages & frameworks, Web servers |
@@ -154,7 +154,7 @@ These tags keep the tools compatible. The builds still pull the current updates 
 Use these example commands:
 
 ```sh
-# Compile and run “Hello world” in five languages
+# Check Hello world in seven languages and two LaTeX engines
 docker run --rm stden/compilers
 
 # Run a Swing application without a monitor
@@ -336,12 +336,12 @@ This option does not call `docker build`.
 
 The `up.sh` and `up.cmd` scripts build the image and run `test-images.sh --no-build`.
 They publish the image only if the check passes. The `up.cmd` script calls `bash`.
-The eighteen shared tool images use the publish helper [ci/publish-image.sh](ci/publish-image.sh).
+The nineteen shared tool images use the publish helper [ci/publish-image.sh](ci/publish-image.sh).
 The helper also stops if the current branch is not `main`.
 
 GitHub Actions runs `./test-images.sh --no-build <image>` after each image build.
 The runner has Docker, so it runs the full container checks.
-The eighteen shared tool images each have a `smoke-test.sh` file. The test runner mounts the file
+The nineteen shared tool images each have a `smoke-test.sh` file. The test runner mounts the file
 and runs functional checks inside the image. The database and Open WebUI tests use
 temporary data directories.
 

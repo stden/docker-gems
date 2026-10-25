@@ -44,7 +44,7 @@ every child process, so a process that stays alive stops the job.
 1. `test-images.sh`: add the name to `ALL` (alphabetical order) and to the `test_shared` case in `run_image`.
 2. `ci/test-built-image.sh`: add the name to the case that runs `smoke-test.sh` with PRoot.
 3. `ci/hub-categories.json`: add one to three search category slugs. Always include `languages-and-frameworks`.
-4. `README.md`: the "Images" table, the "Select an image" table, an example command, and the number in the two sentences that start with `The eighteen shared tool images`.
+4. `README.md`: update the image tables, an example command, and the number of shared tool images.
 5. `AGENTS.md`: the smoke test table, and the number of shared tool images.
 6. `.github/workflows/docker-images.yml`: if the image is larger than about 5 GB, add the name to the `if` list of the `🧹 For a large image` step.
 

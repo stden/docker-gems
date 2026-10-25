@@ -35,6 +35,12 @@ case "$1" in
       *' cpp:test '*|*' cpp:latest '*)
         [[ "$SCENARIO" != cpp_failure ]] || exit 44
         ;;
+      *' compilers:test '*|*' compilers:latest '*)
+        [[ " $* " == *' --entrypoint bash '* ]] || exit 49
+        [[ " $* " == *'/compilers/smoke-test.sh:/tmp/docker-gems-smoke.sh:ro '* ]] || exit 50
+        echo 'Compiler smoke test details'
+        [[ "$SCENARIO" != compilers_failure ]] || exit 52
+        ;;
       *' rust-node:test '*|*' rust-node:latest '*)
         [[ " $* " == *' --entrypoint bash '* ]] || exit 49
         [[ " $* " == *'/rust-node/smoke-test.sh:/tmp/docker-gems-smoke.sh:ro '* ]] || exit 50
@@ -181,6 +187,9 @@ run_case shared_success rust-node 0
 run_case shared_no_build rust-node 0 --no-build
 run_case shared_failure rust-node 1 --no-build
 run_case shared_build_failure rust-node 1
+run_case compilers_success compilers 0
+run_case compilers_no_build compilers 0 --no-build
+run_case compilers_failure compilers 1 --no-build
 
 echo 'Check that a failed smoke test prevents publication'
 : >"$TRACE"
