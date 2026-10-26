@@ -54,7 +54,17 @@
     "machine-learning-and-ai",
     "languages-and-frameworks"
   ],
+  "kafka": [
+    "integration-and-delivery",
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
   "java": [
+    "languages-and-frameworks",
+    "developer-tools",
+    "integration-and-delivery"
+  ],
+  "java-17": [
     "languages-and-frameworks",
     "developer-tools",
     "integration-and-delivery"
@@ -73,6 +83,16 @@
     "languages-and-frameworks"
   ],
   "latex": [
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
+  "mailpit": [
+    "developer-tools",
+    "integration-and-delivery",
+    "languages-and-frameworks"
+  ],
+  "minio": [
+    "databases-and-storage",
     "developer-tools",
     "languages-and-frameworks"
   ],
@@ -104,6 +124,11 @@
     "developer-tools",
     "languages-and-frameworks"
   ],
+  "rabbitmq": [
+    "integration-and-delivery",
+    "developer-tools",
+    "languages-and-frameworks"
+  ],
   "rust": [
     "languages-and-frameworks",
     "developer-tools"
@@ -121,6 +146,11 @@
     "languages-and-frameworks",
     "developer-tools",
     "integration-and-delivery"
+  ],
+  "wiremock": [
+    "developer-tools",
+    "integration-and-delivery",
+    "languages-and-frameworks"
   ],
   "web-qa": [
     "developer-tools",

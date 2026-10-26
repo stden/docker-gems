@@ -1,0 +1,32 @@
+{
+  "exchanges": [
+    {
+      "name": "demo",
+      "vhost": "/",
+      "type": "direct",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "demo",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "demo",
+      "vhost": "/",
+      "destination": "demo",
+      "destination_type": "queue",
+      "routing_key": "demo",
+      "arguments": {}
+    }
+  ]
+}

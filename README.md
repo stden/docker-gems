@@ -76,15 +76,21 @@ Images
 | [`compilers`](compilers/README.md) | `debian:stable-slim` | C (GCC), C++ (g++), C# (Mono), D (DMD), Haskell (GHC), Free Pascal, Python 3 with NumPy and pandas, LaTeX | [Overview](https://hub.docker.com/r/stden/compilers) · [Tags](https://hub.docker.com/r/stden/compilers/tags) | Languages & frameworks, Developer tools |
 | [`cpp`](cpp/README.md) | `gcc:latest` | GCC, CMake, code coverage (gcovr, lcov), memory checks (valgrind) | [Overview](https://hub.docker.com/r/stden/cpp) · [Tags](https://hub.docker.com/r/stden/cpp/tags) | Developer tools, Languages & frameworks |
 | [`java`](java/README.md) | `maven:3-amazoncorretto-25` | JDK 25 (LTS) and Maven for Java builds and tests | [Overview](https://hub.docker.com/r/stden/java) · [Tags](https://hub.docker.com/r/stden/java/tags) | Languages & frameworks, Developer tools, Integration & delivery |
+| [`java-17`](java-17/README.md) | `maven:3.9-eclipse-temurin-17-alpine` | JDK 17 LTS and Maven 3.9 with git, curl, jq, and SSH tools | [Overview](https://hub.docker.com/r/stden/java-17) · [Tags](https://hub.docker.com/r/stden/java-17/tags) | Languages & frameworks, Developer tools, Integration & delivery |
 | [`java-eks`](java-eks/README.md) | `amazoncorretto:25` | A Spring Boot 4 REST API for AWS EKS. See [java-eks/README.md](java-eks/README.md). | [Overview](https://hub.docker.com/r/stden/java-eks) · [Tags](https://hub.docker.com/r/stden/java-eks/tags) | Languages & frameworks, Web servers |
 | [`java-run-swing`](java-run-swing/README.md) | `alpine:latest` | OpenJDK 25 and a virtual X server (Xvfb) for Swing applications without a monitor | [Overview](https://hub.docker.com/r/stden/java-run-swing) · [Tags](https://hub.docker.com/r/stden/java-run-swing/tags) | Languages & frameworks, Developer tools |
 | [`java-ui-browser`](java-ui-browser/README.md) | `eclipse-temurin:27-jdk-resolute` | JDK 27, Gradle 9.8.2, Google Chrome, git, and Python 3 for Java UI tests in a browser | [Overview](https://hub.docker.com/r/stden/java-ui-browser) · [Tags](https://hub.docker.com/r/stden/java-ui-browser/tags) | Developer tools, Integration & delivery, Languages & frameworks |
+| [`kafka`](kafka/README.md) | `apache/kafka:latest` | Single-node Apache Kafka 3 broker in KRaft mode for message testing | [Overview](https://hub.docker.com/r/stden/kafka) · [Tags](https://hub.docker.com/r/stden/kafka/tags) | Integration & delivery, Developer tools, Languages & frameworks |
 | [`latex`](latex/README.md) | `texlive/texlive:latest` | TeX Live (full scheme), sshpass, C++ tools with Boost.Filesystem | [Overview](https://hub.docker.com/r/stden/latex) · [Tags](https://hub.docker.com/r/stden/latex/tags) | Developer tools, Languages & frameworks |
+| [`mailpit`](mailpit/README.md) | `axllent/mailpit:latest` | Mailpit SMTP trap with REST API and web UI for email testing | [Overview](https://hub.docker.com/r/stden/mailpit) · [Tags](https://hub.docker.com/r/stden/mailpit/tags) | Developer tools, Integration & delivery, Languages & frameworks |
+| [`minio`](minio/README.md) | `minio/minio:latest` | S3-compatible MinIO object store with the MinIO client | [Overview](https://hub.docker.com/r/stden/minio) · [Tags](https://hub.docker.com/r/stden/minio/tags) | Databases & storage, Developer tools, Languages & frameworks |
 | [`my-python-app`](my-python-app/README.md) | `python:latest` | A course application that checks a website and reads a MySQL table | [Overview](https://hub.docker.com/r/stden/my-python-app) · [Tags](https://hub.docker.com/r/stden/my-python-app/tags) | Languages & frameworks, Developer tools |
 | [`python`](python/README.md) | `python:latest` | Python, uv, pytest, Behave, Ruff, and mypy to test and check Python code | [Overview](https://hub.docker.com/r/stden/python) · [Tags](https://hub.docker.com/r/stden/python/tags) | Languages & frameworks, Developer tools, Integration & delivery |
+| [`rabbitmq`](rabbitmq/README.md) | `rabbitmq:management-alpine` | RabbitMQ broker with management UI and a demo exchange and queue | [Overview](https://hub.docker.com/r/stden/rabbitmq) · [Tags](https://hub.docker.com/r/stden/rabbitmq/tags) | Integration & delivery, Developer tools, Languages & frameworks |
 | [`rust`](rust/README.md) | `rust:latest` | rustc, Cargo, rustfmt, and Clippy for Rust builds and checks | [Overview](https://hub.docker.com/r/stden/rust) · [Tags](https://hub.docker.com/r/stden/rust/tags) | Languages & frameworks, Developer tools |
 | [`rust-node`](rust-node/README.md) | `rust:latest` and `node:latest` | Rust and Node.js tools for full-stack builds, with OpenSSL development libraries | [Overview](https://hub.docker.com/r/stden/rust-node) · [Tags](https://hub.docker.com/r/stden/rust-node/tags) | Languages & frameworks, Developer tools, Integration & delivery |
 | [`web-qa`](web-qa/README.md) | `python:latest` and `node:latest` | Playwright, Chrome, pytest, Behave, Lighthouse, and accessibility checks | [Overview](https://hub.docker.com/r/stden/web-qa) · [Tags](https://hub.docker.com/r/stden/web-qa/tags) | Developer tools, Integration & delivery, Languages & frameworks |
+| [`wiremock`](wiremock/README.md) | `wiremock/wiremock:latest` | WireMock HTTP mock server with admin API and a pre-loaded demo stub | [Overview](https://hub.docker.com/r/stden/wiremock) · [Tags](https://hub.docker.com/r/stden/wiremock/tags) | Developer tools, Integration & delivery, Languages & frameworks |
 | [`document-tools`](document-tools/README.md) | `python:latest` | Typst, LibreOffice, Poppler, fonts, and uv for document conversion | [Overview](https://hub.docker.com/r/stden/document-tools) · [Tags](https://hub.docker.com/r/stden/document-tools/tags) | Developer tools, Languages & frameworks |
 | [`rust-ci`](rust-ci/README.md) | `rust:latest` | Nextest, coverage (llvm-cov, tarpaulin), cargo-deny, cargo-audit, sqlx-cli, cargo-mutants, sccache, and fast linkers | [Overview](https://hub.docker.com/r/stden/rust-ci) · [Tags](https://hub.docker.com/r/stden/rust-ci/tags) | Developer tools, Integration & delivery, Languages & frameworks |
 | [`rust-desktop`](rust-desktop/README.md) | `rust:latest` | GTK, X11/XCB libraries, Xvfb, sccache, and Rust coverage tools | [Overview](https://hub.docker.com/r/stden/rust-desktop) · [Tags](https://hub.docker.com/r/stden/rust-desktop/tags) | Languages & frameworks, Developer tools |
@@ -115,15 +121,21 @@ Select an image
 | Compile and run programs in several languages | [`compilers`](compilers/) |
 | Build C++, measure coverage, and check memory | [`cpp`](cpp/) |
 | Build a Java project and run Maven tests | [`java`](java/) |
+| Build a Java 17 project and run Maven tests | [`java-17`](java-17/) |
 | Start a REST API and open Swagger UI | [`java-eks`](java-eks/) |
 | Run a Swing application without a monitor | [`java-run-swing`](java-run-swing/) |
 | Run Java UI tests in Chrome | [`java-ui-browser`](java-ui-browser/) |
 | Build a PDF from LaTeX | [`latex`](latex/) |
+| Test email sending and receiving | [`mailpit`](mailpit/) |
+| Store and retrieve S3-compatible objects | [`minio`](minio/) |
 | Check a website and read a table from MySQL | [`my-python-app`](my-python-app/) and [docker-compose.yml](docker-compose.yml) |
 | Run pytest and Behave tests, and check code with Ruff and mypy | [`python`](python/) |
+| Send and receive AMQP messages | [`rabbitmq`](rabbitmq/) |
 | Build a Rust project, format the code, and run Clippy | [`rust`](rust/) |
 | Build a Rust backend and a Node.js frontend | [`rust-node`](rust-node/) |
 | Run browser, accessibility, and performance checks | [`web-qa`](web-qa/) |
+| Test Kafka producer and consumer workflows | [`kafka`](kafka/) |
+| Mock HTTP endpoints for integration tests | [`wiremock`](wiremock/) |
 | Create PDFs or convert office documents | [`document-tools`](document-tools/) |
 | Run Rust CI tests with coverage, license, mutation, and database migration tools | [`rust-ci`](rust-ci/) |
 | Build and test a Rust desktop application | [`rust-desktop`](rust-desktop/) |

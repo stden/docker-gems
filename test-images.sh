@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 # Build images and run smoke tests.
 # ./test-images.sh                 - build and test each image with the :test tag
 # ./test-images.sh java rust       - test only the specified directories
@@ -22,21 +22,27 @@ ALL=(
   document-tools
   graphify
   java
+  java-17
   java-eks
   java-run-swing
   java-ui-browser
+  kafka
   latex
+  mailpit
+  minio
   my-python-app
   open-webui
   php
   postgres-vector-graph
   python
   python-media
+  rabbitmq
   rust
   rust-ci
   rust-desktop
   rust-node
   web-qa
+  wiremock
 )
 
 # --no-build tests the :latest tag that docker build -t <name> creates.
@@ -118,6 +124,14 @@ test_java() {
   local output
   output=$(docker run --rm "java:${IMAGE_TAG}" bash -c 'java -version && mvn -version' 2>&1) || { printf '%s\n' "$output" >&2; return 1; }
   expect_lines "$output" 'openjdk version "25' 'Apache Maven 3'
+}
+
+test_java_17() {
+  build_image java-17
+  echo "Check Java 17, Maven, git, curl, and jq versions"
+  local output
+  output=$(docker run --rm "java-17:${IMAGE_TAG}" bash -c 'java -version && mvn -version && git --version && curl --version && jq --version' 2>&1) || { printf '%s\n' "$output" >&2; return 1; }
+  expect_lines "$output" 'openjdk version "17' 'Apache Maven 3' 'git version' 'curl' 'jq-'
 }
 
 test_java_eks() {
@@ -207,7 +221,7 @@ test_latex() {
 \usepackage[utf8]{inputenc}
 \usepackage[russian]{babel}
 \begin{document}
-Привет из контейнера.
+╨ƒ╤Ç╨╕╨▓╨╡╤é ╨╕╨╖ ╨║╨╛╨╜╤é╨╡╨╣╨╜╨╡╤Ç╨░.
 \end{document}
 EOF
   cat >"$LATEX_DIR/boost.cpp" <<'EOF'
@@ -287,6 +301,215 @@ test_rust() {
   expect_lines "$output" 'rustc ' 'cargo ' 'rustfmt ' 'clippy '
 }
 
+test_kafka() {
+  build_image kafka
+  KAFKA_CID=""
+  cleanup_kafka() {
+    local status=${1:-0}
+    if [[ -n "${KAFKA_CID}" ]]; then
+      if [[ "$status" -ne 0 ]]; then
+        echo "Kafka logs after test failure:" >&2
+        docker logs "$KAFKA_CID" >&2 || true
+      fi
+      docker rm -f "$KAFKA_CID" >/dev/null 2>&1 || true
+      KAFKA_CID=""
+    fi
+  }
+  trap 'status=$?; cleanup_kafka "$status" || true; exit "$status"' EXIT
+  echo "Start the Kafka broker and wait for it to accept connections"
+  KAFKA_CID=$(docker run -d -p 127.0.0.1::9092 "kafka:${IMAGE_TAG}")
+  local ready _
+  ready=0
+  for _ in $(seq 1 60); do
+    if docker exec "$KAFKA_CID" /opt/kafka/bin/kafka-broker-api-versions.sh \
+        --bootstrap-server localhost:9092 >/dev/null 2>&1; then
+      ready=1
+      break
+    fi
+    sleep 2
+  done
+  [[ "$ready" -eq 1 ]]
+  echo "Create a topic, produce a message, and consume it"
+  docker exec "$KAFKA_CID" /opt/kafka/bin/kafka-topics.sh \
+    --create --topic smoke-test \
+    --bootstrap-server localhost:9092 \
+    --partitions 1 --replication-factor 1
+  echo "smoke-message" | docker exec -i "$KAFKA_CID" \
+    /opt/kafka/bin/kafka-console-producer.sh \
+    --bootstrap-server localhost:9092 --topic smoke-test
+  local output
+  output=$(docker exec "$KAFKA_CID" timeout 15 \
+    /opt/kafka/bin/kafka-console-consumer.sh \
+    --bootstrap-server localhost:9092 \
+    --topic smoke-test --from-beginning --max-messages 1 2>/dev/null)
+  expect_lines "$output" 'smoke-message'
+  cleanup_kafka
+  trap - EXIT
+}
+
+test_mailpit() {
+  build_image mailpit
+  MAILPIT_CID=""
+  cleanup_mailpit() {
+    local status=${1:-0}
+    if [[ -n "${MAILPIT_CID}" ]]; then
+      if [[ "$status" -ne 0 ]]; then
+        echo "Mailpit logs after test failure:" >&2
+        docker logs "$MAILPIT_CID" >&2 || true
+      fi
+      docker rm -f "$MAILPIT_CID" >/dev/null 2>&1 || true
+      MAILPIT_CID=""
+    fi
+  }
+  trap 'status=$?; cleanup_mailpit "$status" || true; exit "$status"' EXIT
+  echo "Start Mailpit and wait for the REST API"
+  MAILPIT_CID=$(docker run -d -p 127.0.0.1::8025 "mailpit:${IMAGE_TAG}")
+  local port ready _
+  port=$(docker inspect -f '{{ (index (index .NetworkSettings.Ports "8025/tcp") 0).HostPort }}' "$MAILPIT_CID")
+  ready=0
+  for _ in $(seq 1 30); do
+    if curl -fsS "http://127.0.0.1:${port}/api/v1/info" >/dev/null 2>&1; then
+      ready=1
+      break
+    fi
+    sleep 2
+  done
+  [[ "$ready" -eq 1 ]]
+  echo "Send a message and check that it is stored"
+  curl -fsS \
+    -X POST "http://127.0.0.1:${port}/api/v1/message" \
+    -H 'Content-Type: application/json' \
+    -d '{"From":{"Address":"sender@example.com"},"To":[{"Address":"to@example.com"}],"Subject":"Smoke test","Text":"smoke-ok"}' \
+    >/dev/null
+  local output
+  output=$(curl -fsS "http://127.0.0.1:${port}/api/v1/messages")
+  expect_lines "$output" 'Smoke test'
+  cleanup_mailpit
+  trap - EXIT
+}
+
+test_minio() {
+  build_image minio
+  MINIO_CID=""
+  cleanup_minio() {
+    local status=${1:-0}
+    if [[ -n "${MINIO_CID}" ]]; then
+      if [[ "$status" -ne 0 ]]; then
+        echo "MinIO logs after test failure:" >&2
+        docker logs "$MINIO_CID" >&2 || true
+      fi
+      docker rm -f "$MINIO_CID" >/dev/null 2>&1 || true
+      MINIO_CID=""
+    fi
+  }
+  trap 'status=$?; cleanup_minio "$status" || true; exit "$status"' EXIT
+  echo "Start MinIO and wait for the health endpoint"
+  MINIO_CID=$(docker run -d -p 127.0.0.1::9000 "minio:${IMAGE_TAG}")
+  local port ready _
+  port=$(docker inspect -f '{{ (index (index .NetworkSettings.Ports "9000/tcp") 0).HostPort }}' "$MINIO_CID")
+  ready=0
+  for _ in $(seq 1 30); do
+    if curl -fsS "http://127.0.0.1:${port}/minio/health/live" >/dev/null 2>&1; then
+      ready=1
+      break
+    fi
+    sleep 2
+  done
+  [[ "$ready" -eq 1 ]]
+  echo "Create a bucket, upload an object, and list it"
+  docker exec "$MINIO_CID" mc alias set local http://localhost:9000 minioadmin minioadmin >/dev/null
+  docker exec "$MINIO_CID" mc mb local/smoke-bucket >/dev/null
+  echo "smoke-content" | docker exec -i "$MINIO_CID" mc pipe local/smoke-bucket/hello.txt
+  local output
+  output=$(docker exec "$MINIO_CID" mc ls local/smoke-bucket)
+  expect_lines "$output" 'hello.txt'
+  cleanup_minio
+  trap - EXIT
+}
+
+test_rabbitmq() {
+  build_image rabbitmq
+  RABBITMQ_CID=""
+  cleanup_rabbitmq() {
+    local status=${1:-0}
+    if [[ -n "${RABBITMQ_CID}" ]]; then
+      if [[ "$status" -ne 0 ]]; then
+        echo "RabbitMQ logs after test failure:" >&2
+        docker logs "$RABBITMQ_CID" >&2 || true
+      fi
+      docker rm -f "$RABBITMQ_CID" >/dev/null 2>&1 || true
+      RABBITMQ_CID=""
+    fi
+  }
+  trap 'status=$?; cleanup_rabbitmq "$status" || true; exit "$status"' EXIT
+  echo "Start RabbitMQ and wait for the management API"
+  RABBITMQ_CID=$(docker run -d -p 127.0.0.1::15672 "rabbitmq:${IMAGE_TAG}")
+  local port ready _
+  port=$(docker inspect -f '{{ (index (index .NetworkSettings.Ports "15672/tcp") 0).HostPort }}' "$RABBITMQ_CID")
+  ready=0
+  for _ in $(seq 1 60); do
+    if curl -fsS -u guest:guest \
+        "http://127.0.0.1:${port}/api/healthchecks/node" >/dev/null 2>&1; then
+      ready=1
+      break
+    fi
+    sleep 2
+  done
+  [[ "$ready" -eq 1 ]]
+  echo "Publish a message and retrieve it via the management API"
+  curl -fsS -u guest:guest \
+    -X POST "http://127.0.0.1:${port}/api/exchanges/%2F/demo/publish" \
+    -H 'Content-Type: application/json' \
+    -d '{"properties":{},"routing_key":"demo","payload":"smoke-ok","payload_encoding":"string"}' \
+    >/dev/null
+  local output
+  output=$(curl -fsS -u guest:guest \
+    -X POST "http://127.0.0.1:${port}/api/queues/%2F/demo/get" \
+    -H 'Content-Type: application/json' \
+    -d '{"count":1,"requeue":false,"encoding":"auto"}')
+  expect_lines "$output" 'smoke-ok'
+  cleanup_rabbitmq
+  trap - EXIT
+}
+
+test_wiremock() {
+  build_image wiremock
+  WIREMOCK_CID=""
+  cleanup_wiremock() {
+    local status=${1:-0}
+    if [[ -n "${WIREMOCK_CID}" ]]; then
+      if [[ "$status" -ne 0 ]]; then
+        echo "WireMock logs after test failure:" >&2
+        docker logs "$WIREMOCK_CID" >&2 || true
+      fi
+      docker rm -f "$WIREMOCK_CID" >/dev/null 2>&1 || true
+      WIREMOCK_CID=""
+    fi
+  }
+  trap 'status=$?; cleanup_wiremock "$status" || true; exit "$status"' EXIT
+  echo "Start WireMock and wait for the admin API"
+  WIREMOCK_CID=$(docker run -d -p 127.0.0.1::8080 "wiremock:${IMAGE_TAG}")
+  local port ready _
+  port=$(docker inspect -f '{{ (index (index .NetworkSettings.Ports "8080/tcp") 0).HostPort }}' "$WIREMOCK_CID")
+  ready=0
+  for _ in $(seq 1 30); do
+    if curl -fsS "http://127.0.0.1:${port}/__admin/mappings" >/dev/null 2>&1; then
+      ready=1
+      break
+    fi
+    sleep 2
+  done
+  [[ "$ready" -eq 1 ]]
+  echo "Check the demo stub and the mapping count"
+  local output mappings
+  output=$(curl -fsS "http://127.0.0.1:${port}/demo")
+  expect_lines "$output" '"status"'
+  mappings=$(curl -fsS "http://127.0.0.1:${port}/__admin/mappings")
+  expect_lines "$mappings" '"total"'
+  cleanup_wiremock
+  trap - EXIT
+}
+
 test_shared() {
   local name=$1
   local -a options=(--rm --entrypoint bash)
@@ -311,13 +534,19 @@ run_image() {
   case "$name" in
     cpp) test_cpp ;;
     java) test_java ;;
+    java-17) test_java_17 ;;
     java-eks) test_java_eks ;;
     java-run-swing) test_java_run_swing ;;
     java-ui-browser) test_java_ui_browser ;;
+    kafka) test_kafka ;;
     latex) test_latex ;;
+    mailpit) test_mailpit ;;
+    minio) test_minio ;;
     my-python-app) test_my_python_app ;;
     python) test_python ;;
+    rabbitmq) test_rabbitmq ;;
     rust) test_rust ;;
+    wiremock) test_wiremock ;;
     allure|android|argocd|code-quality|codegraph|compilers|cpp-cuda|cpp-vulkan|crossplane|document-tools|graphify|open-webui|php|postgres-vector-graph|python-media|rust-ci|rust-desktop|rust-node|web-qa)
       test_shared "$name"
       ;;

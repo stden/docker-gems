@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 # Check the failure reports, the cleanup, and the tests for the next image without Docker.
 set -euo pipefail
 
@@ -47,6 +47,16 @@ case "$1" in
         echo 'Shared smoke test details'
         [[ "$SCENARIO" != shared_failure ]] || exit 51
         ;;
+      *' java-17:test '*|*' java-17:latest '*)
+        [[ "$SCENARIO" == missing_version_17 ]] || echo 'openjdk version "17"'
+        echo 'Apache Maven 3'
+        echo 'git version 2.47.0'
+        echo 'curl 8.11.0 (x86_64)'
+        echo 'jq-1.7.1'
+        ;;
+      *' kafka:test '*|*' kafka:latest '*|*' mailpit:test '*|*' mailpit:latest '*|*' minio:test '*|*' minio:latest '*|*' rabbitmq:test '*|*' rabbitmq:latest '*|*' wiremock:test '*|*' wiremock:latest '*)
+        echo daemon-container
+        ;;
       *) exit 90 ;;
     esac
     ;;
@@ -56,6 +66,19 @@ case "$1" in
     exit 81
     ;;
   rm) ;;
+  exec)
+    case " $* " in
+      *'kafka-broker-api-versions.sh'*) ;;
+      *'kafka-topics.sh'*) ;;
+      *'kafka-console-producer.sh'*) ;;
+      *'kafka-console-consumer.sh'*) echo 'smoke-message' ;;
+      *' mc alias '*) ;;
+      *' mc mb '*) ;;
+      *' mc pipe '*) ;;
+      *' mc ls '*) echo 'hello.txt' ;;
+      *) exit 93 ;;
+    esac
+    ;;
   tag|push) ;;
   compose)
     if [[ " $* " == *' ps -a '* ]]; then
@@ -104,9 +127,25 @@ if [[ " $* " == *' -w '* ]]; then
   else
     printf 200
   fi
+elif [[ "$SCENARIO" == daemon_failure && " $* " == *'healthchecks'* ]]; then
+  exit 61
+elif [[ " $* " == *'/api/queues/'* && " $* " == *' -X POST '* ]]; then
+  printf '[{"payload":"smoke-ok"}]'
+elif [[ " $* " == *'/api/v1/messages'* && " $* " != *' -X POST '* ]]; then
+  printf '{"messages":[{"Subject":"Smoke test"}]}'
+elif [[ " $* " == *'/__admin/mappings'* && " $* " != *' -X POST '* ]]; then
+  printf '{"total":1}'
+elif [[ " $* " == *'/demo'* ]]; then
+  printf '{"status":"ok"}'
 fi
 MOCK
 chmod +x "$WORK/bin/docker" "$WORK/bin/curl" "$WORK/bin/git"
+
+cat >"$WORK/bin/sleep" <<'MOCK'
+#!/bin/bash
+exit 0
+MOCK
+chmod +x "$WORK/bin/sleep"
 
 failures=0
 run_case() {
@@ -169,6 +208,18 @@ run_case() {
       return
     fi
   fi
+  if [[ "$scenario" == daemon_failure ]]; then
+    if ! grep -Fxq 'Application log details' "$WORK/output"; then
+      echo "FAIL $scenario: container logs were not shown after the daemon failed to start"
+      failures=$((failures + 1))
+      return
+    fi
+    if ! grep -qF 'rm -f daemon-container' "$TRACE"; then
+      echo "FAIL $scenario: the container was not removed after the daemon failed to start"
+      failures=$((failures + 1))
+      return
+    fi
+  fi
   echo "PASS $scenario"
 }
 
@@ -190,6 +241,10 @@ run_case shared_build_failure rust-node 1
 run_case compilers_success compilers 0
 run_case compilers_no_build compilers 0 --no-build
 run_case compilers_failure compilers 1 --no-build
+run_case success java-17 0
+run_case daemon_success rabbitmq 0
+run_case daemon_exec_success kafka 0
+run_case daemon_failure rabbitmq 1 --no-build
 
 echo 'Check that a failed smoke test prevents publication'
 : >"$TRACE"
