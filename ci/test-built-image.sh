@@ -115,6 +115,10 @@ EOF
     capture -- bash -c 'java -version && mvn -version'
     expect_out "$output" 'openjdk version "25' 'Apache Maven 3'
     ;;
+  java-17)
+    capture -- bash -c 'java -version && mvn -version && git --version && curl --version && jq --version'
+    expect_out "$output" 'openjdk version "17' 'Apache Maven 3' 'git version' 'curl' 'jq-'
+    ;;
   java-eks)
     # The shell inside the image expands JAVA_OPTS.
     # shellcheck disable=SC2016
@@ -137,8 +141,9 @@ EOF
     fi
     path=
     for path in /api/health /api-docs /swagger-ui/index.html; do
-      wget -q -O /dev/null "http://127.0.0.1:8080$path"
-      echo "$path 200"
+      code=$(curl -sS -o /dev/null -w '%{http_code}' "http://127.0.0.1:8080$path")
+      echo "$path $code"
+      [ "$code" = "200" ]
     done
     cleanup
     ;;
@@ -209,6 +214,11 @@ EOF
   rust)
     capture -- bash -c 'rustc --version && cargo --version && rustfmt --version && cargo clippy --version'
     expect_out "$output" 'rustc ' 'cargo ' 'rustfmt ' 'clippy '
+    ;;
+  kafka|mailpit|minio|rabbitmq|wiremock)
+    # These images run as network daemons. PRoot cannot start them.
+    # The local test-images.sh script runs the full check.
+    echo "CI skips the daemon check for $NAME. Run test-images.sh for the full check."
     ;;
   *)
     echo "Unknown image: $NAME" >&2

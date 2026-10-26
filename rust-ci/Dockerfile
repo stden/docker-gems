@@ -27,13 +27,13 @@ RUN set -eu; \
     echo "$binstall_sha  /tmp/binstall.tgz" | sha256sum -c -; \
     tar -xzf /tmp/binstall.tgz -C /usr/local/cargo/bin cargo-binstall; \
     rm /tmp/binstall.tgz; \
-    cargo binstall --no-confirm --strategies crate-meta-data,compile sccache cargo-nextest cargo-audit; \
+    cargo binstall --no-confirm --disable-telemetry --strategies crate-meta-data,compile sccache cargo-nextest cargo-audit; \
     rm -rf /usr/local/cargo/registry /usr/local/cargo/git
 
 # Install prebuilt coverage, policy, database, and mutation tools. Do not compile them.
 # sqlx-cli has no upstream release binaries. Use the signed cargo-quickinstall build.
 # Delete the crate download caches again after the last installation.
-RUN cargo binstall --no-confirm --strategies crate-meta-data \
+RUN cargo binstall --no-confirm --disable-telemetry --strategies crate-meta-data \
         cargo-tarpaulin cargo-llvm-cov cargo-deny cargo-mutants \
     && cargo binstall --no-confirm --only-signed --disable-telemetry --strategies quick-install sqlx-cli \
     && rm -rf /usr/local/cargo/registry /usr/local/cargo/git

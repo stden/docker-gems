@@ -25,7 +25,10 @@ FROM node:slim
 ENV ALLURE_NO_ANALYTICS=true
 
 # Allure Report 2 runs on Java.
+# Install the security updates of the base image before the tools. The official image
+# can be days behind the security repository of the distribution.
 RUN apt-get update \
+ && apt-get upgrade -y \
  && apt-get install -y --no-install-recommends default-jre-headless \
  && rm -rf /var/lib/apt/lists/*
 

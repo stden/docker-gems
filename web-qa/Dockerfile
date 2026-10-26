@@ -20,8 +20,11 @@ RUN uv pip install --system --no-cache pytest behave playwright pytest-playwrigh
  && chmod -R a+rX /ms-playwright \
  && rm -rf /var/lib/apt/lists/*
 
+# Install the security updates of the base image before the tools. The official image
+# can be days behind the security repository of the distribution.
 RUN test "$(dpkg --print-architecture)" = amd64 \
  && apt-get update \
+ && apt-get upgrade -y \
  && apt-get install -y --no-install-recommends ca-certificates curl \
  && curl -fsSL https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
       -o /tmp/chrome.deb \

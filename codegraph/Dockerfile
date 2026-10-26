@@ -14,7 +14,10 @@ RUN npm install --global --no-audit --no-fund @colbymchenry/codegraph \
 # The CodeGraph MCP server uses stdio only. mcpo publishes its tools as an OpenAPI
 # server, for example for Open WebUI. mcpo 0.0.20 fails with mcp 2 and with
 # FastAPI 0.145 or later, so its environment has these limits. See AGENTS.md.
+# Install the security updates of the base image before the tools. The official image
+# can be days behind the security repository of the distribution.
 RUN apt-get update \
+ && apt-get upgrade -y \
  && apt-get install -y --no-install-recommends python3-venv \
  && rm -rf /var/lib/apt/lists/* \
  && python3 -m venv /opt/mcpo \

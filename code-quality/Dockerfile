@@ -54,7 +54,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # The mounted repository often has a different owner than the container user. Git
 # then refuses to read it, and gitleaks finds 0 commits and passes. Trust all
 # directories in this single-purpose container.
+# Install the security updates of the base image before the tools. The official image
+# can be days behind the security repository of the distribution.
 RUN apt-get update \
+ && apt-get upgrade -y \
  && apt-get install -y --no-install-recommends ca-certificates git python3 python3-venv \
  && rm -rf /var/lib/apt/lists/* \
  && git config --system --add safe.directory '*'

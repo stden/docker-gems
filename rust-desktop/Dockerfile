@@ -3,7 +3,10 @@ FROM rust:latest
 
 ARG BINSTALL_VERSION=1.26.1
 
+# Install the security updates of the base image before the tools. The official image
+# can be days behind the security repository of the distribution.
 RUN apt-get update \
+    && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
         build-essential ca-certificates curl git libatk1.0-dev libcairo2-dev \
         libgdk-pixbuf-2.0-dev libglib2.0-dev libgtk-3-dev libpango1.0-dev \
@@ -13,6 +16,7 @@ RUN apt-get update \
     && rustup component add rustfmt clippy llvm-tools-preview
 
 # Check the installer archive against the official release checksum.
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN set -eu; \
     case "$(uname -m)" in \
         x86_64) binstall_sha=43d379fef8cb450961a14ff113e7bce7b5e1e52db709c776d186f928d8a20a40 ;; \
@@ -25,7 +29,7 @@ RUN set -eu; \
     echo "$binstall_sha  /tmp/binstall.tgz" | sha256sum -c -; \
     tar -xzf /tmp/binstall.tgz -C /usr/local/cargo/bin cargo-binstall; \
     rm /tmp/binstall.tgz; \
-    cargo binstall --no-confirm --strategies crate-meta-data,compile sccache cargo-tarpaulin
+    cargo binstall --no-confirm --disable-telemetry --strategies crate-meta-data,compile sccache cargo-tarpaulin
 
 WORKDIR /workspace
 CMD ["bash"]

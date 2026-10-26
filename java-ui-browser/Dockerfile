@@ -11,7 +11,10 @@ ENV PATH="${GRADLE_HOME}/bin:${PATH}"
 
 USER root
 
+# Install the security updates of the base image before the tools. The official image
+# can be days behind the security repository of the distribution.
 RUN apt-get update \
+    && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
        ca-certificates \
        curl \
