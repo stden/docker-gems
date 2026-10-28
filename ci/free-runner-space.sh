@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Remove unused tool directories from the temporary GitHub runner.
 # Delete the directories at the same time.
 # When one delete fails, report the error after the other deletes.

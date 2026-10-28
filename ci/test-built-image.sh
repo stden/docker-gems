@@ -1,4 +1,4 @@
-#!/bin/sh
+﻿#!/bin/sh
 # Smoke-test one image after Kaniko builds it and before the job publishes it.
 # Usage: test-built-image.sh NAME ARCHIVE ROOTFS
 # ARCHIVE is a Kaniko --tarPath file. The command exits non-zero when the check fails.

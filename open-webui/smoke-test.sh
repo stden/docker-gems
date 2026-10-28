@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # Start Open WebUI with a temporary data directory and check its HTTP API.
 set -euo pipefail
 

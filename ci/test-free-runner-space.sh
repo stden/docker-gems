@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 # Check that the runner cleanup deletes directories at the same time.
 set -euo pipefail
 

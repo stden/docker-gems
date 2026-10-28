@@ -1,0 +1,96 @@
+{
+  "framework": "behave",
+  "generated_files": {
+    "docker_gems_repository_requirements.feature": "da53ef4cbd48dad014ad58218c135ffe44f747d300a284316095db61b6366991"
+  },
+  "generator": "convert-specs-to-bdd",
+  "requirements": [
+    {
+      "end_line": 5,
+      "exclusion_reason": null,
+      "id": "AC-1",
+      "line": 5,
+      "scenarios": [
+        {
+          "feature": "docker_gems_repository_requirements.feature",
+          "line": 9,
+          "scenario": "each file starts with \"# stden/<directory>\", has a blank second line, has a third line of at most 100 bytes, and is smaller than 25000 bytes"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_1"
+    },
+    {
+      "end_line": 6,
+      "exclusion_reason": null,
+      "id": "AC-2",
+      "line": 6,
+      "scenarios": [
+        {
+          "feature": "docker_gems_repository_requirements.feature",
+          "line": 16,
+          "scenario": "every image has between 1 and 3 Docker Hub categories"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_2"
+    },
+    {
+      "end_line": 7,
+      "exclusion_reason": null,
+      "id": "AC-3",
+      "line": 7,
+      "scenarios": [
+        {
+          "feature": "docker_gems_repository_requirements.feature",
+          "line": 23,
+          "scenario": "all four files use Java 25"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_3"
+    },
+    {
+      "end_line": 8,
+      "exclusion_reason": null,
+      "id": "AC-4",
+      "line": 8,
+      "scenarios": [
+        {
+          "feature": "docker_gems_repository_requirements.feature",
+          "line": 30,
+          "scenario": "it sets \"USER 10001:10001\""
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_4"
+    },
+    {
+      "end_line": 9,
+      "exclusion_reason": null,
+      "id": "AC-5",
+      "line": 9,
+      "scenarios": [
+        {
+          "feature": "docker_gems_repository_requirements.feature",
+          "line": 37,
+          "scenario": "no Dockerfile contains \"--allow-insecure-repositories\" or \"--allow-unauthenticated\""
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_5"
+    }
+  ],
+  "schema_version": 1,
+  "sources": [
+    {
+      "path": "specs/docker_gems_requirements.md",
+      "sha256": "85c4bc12ad4acc7a332170b7842925e9d244138e136ccc0d4f3419b3ffe7a1a1"
+    }
+  ]
+}

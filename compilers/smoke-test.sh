@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # Check every compiler and both PDF engines with the built-in examples.
 set -euo pipefail
 

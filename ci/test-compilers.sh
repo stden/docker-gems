@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+﻿#!/usr/bin/env bash
 # Check the example runner without a compiler installation.
 set -euo pipefail
 
