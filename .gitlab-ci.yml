@@ -11,7 +11,7 @@ variables:
 build_images:
   stage: build
   image:
-    name: ghcr.io/osscontainertools/kaniko:v1.28.6-debug
+    name: ghcr.io/osscontainertools/kaniko:v1.29.0-debug
     entrypoint: [""]
   # Build, test, and push run in one job. Latex is large, and the test unpacks
   # the image after Kaniko finishes, so the job takes more time than the build alone.
