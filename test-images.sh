@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 # Build images and run smoke tests.
 # ./test-images.sh                 - build and test each image with the :test tag
 # ./test-images.sh java rust       - test only the specified directories
@@ -221,7 +221,7 @@ test_latex() {
 \usepackage[utf8]{inputenc}
 \usepackage[russian]{babel}
 \begin{document}
-╨ƒ╤Ç╨╕╨▓╨╡╤é ╨╕╨╖ ╨║╨╛╨╜╤é╨╡╨╣╨╜╨╡╤Ç╨░.
+Привет из контейнера.
 \end{document}
 EOF
   cat >"$LATEX_DIR/boost.cpp" <<'EOF'
@@ -377,9 +377,9 @@ test_mailpit() {
   [[ "$ready" -eq 1 ]]
   echo "Send a message and check that it is stored"
   curl -fsS \
-    -X POST "http://127.0.0.1:${port}/api/v1/message" \
+    -X POST "http://127.0.0.1:${port}/api/v1/send" \
     -H 'Content-Type: application/json' \
-    -d '{"From":{"Address":"sender@example.com"},"To":[{"Address":"to@example.com"}],"Subject":"Smoke test","Text":"smoke-ok"}' \
+    -d '{"From":{"Email":"sender@example.com"},"To":[{"Email":"to@example.com"}],"Subject":"Smoke test","Text":"smoke-ok"}' \
     >/dev/null
   local output
   output=$(curl -fsS "http://127.0.0.1:${port}/api/v1/messages")
@@ -466,7 +466,7 @@ test_rabbitmq() {
   output=$(curl -fsS -u guest:guest \
     -X POST "http://127.0.0.1:${port}/api/queues/%2F/demo/get" \
     -H 'Content-Type: application/json' \
-    -d '{"count":1,"requeue":false,"encoding":"auto"}')
+    -d '{"count":1,"ackmode":"ack_requeue_false","encoding":"auto"}')
   expect_lines "$output" 'smoke-ok'
   cleanup_rabbitmq
   trap - EXIT

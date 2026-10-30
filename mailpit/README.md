@@ -39,6 +39,8 @@ curl -fsS smtp://127.0.0.1:1025 \
 
 CI builds the image and verifies it starts.
 The local test starts Mailpit, sends a message via the REST API, and reads it back.
+Run `/mailpit version --no-release-check` to read the installed version.
+The image disables automatic version checks.
 
 [Dockerfile](https://github.com/stden/docker-gems/blob/main/mailpit/Dockerfile) ·
 [Docker tutorial](https://github.com/stden/docker-gems/blob/main/README.md) ·

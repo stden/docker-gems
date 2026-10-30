@@ -38,6 +38,10 @@ Open the management UI at `http://127.0.0.1:15672` (guest:guest).
 CI builds the image and verifies the configuration files are in place.
 The local test starts the broker, publishes a message to the `demo` exchange, and reads it from the `demo` queue.
 
+The definitions file creates the `/` virtual host and the demo `guest` user with its permissions.
+The demo user has the public `guest` password hash from the [RabbitMQ definitions guide](https://www.rabbitmq.com/docs/definitions#nuances-of-boot-time-definition-import).
+The broker imports the demo exchange, queue, and binding after these resources exist.
+
 [Dockerfile](https://github.com/stden/docker-gems/blob/main/rabbitmq/Dockerfile) ·
 [Docker tutorial](https://github.com/stden/docker-gems/blob/main/README.md) ·
 [Build results](https://github.com/stden/docker-gems/actions)
