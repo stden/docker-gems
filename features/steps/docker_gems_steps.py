@@ -112,3 +112,104 @@ def step_then_no_insecure_apt(context):
     for name, content in context.inspected_dockerfiles:
         assert "--allow-insecure-repositories" not in content, f"Found in {name}/Dockerfile"
         assert "--allow-unauthenticated" not in content, f"Found in {name}/Dockerfile"
+
+
+# ---------------------------------------------------------------------------
+# AC-6 through AC-10 — manually written structure checks
+# ---------------------------------------------------------------------------
+
+import re as _re
+
+_SECRET_ENV_RE = _re.compile(
+    r"^\s*(?:ENV|ARG)\s+\S*(?:TOKEN|PASSWORD|SECRET|PRIVATE_KEY|API_KEY)\S*\s*="
+    r"\s*(?!\s*$)(?!\$)",
+    _re.IGNORECASE | _re.MULTILINE,
+)
+
+
+@then('every image has "languages-and-frameworks" in its category list.')
+def step_then_languages_frameworks_in_all(context):
+    for d in context.image_dirs:
+        cats = context.categories.get(d.name, [])
+        assert "languages-and-frameworks" in cats, (
+            f'{d.name} is missing "languages-and-frameworks" in ci/hub-categories.json'
+        )
+
+
+@when('the "up.sh" and "up.cmd" files are checked')
+def step_when_up_files_checked(context):
+    context.up_check_dirs = context.image_dirs
+
+
+@then('every image except "compilers", "latex", and "java-eks" has both "up.sh" and "up.cmd".')
+def step_then_up_pairs_exist(context):
+    excluded = {"compilers", "latex", "java-eks"}
+    for d in context.up_check_dirs:
+        if d.name in excluded:
+            continue
+        assert (d / "up.sh").is_file(), f"{d.name}/up.sh is missing"
+        assert (d / "up.cmd").is_file(), f"{d.name}/up.cmd is missing"
+
+
+@when("ENV instructions are checked for secret patterns")
+def step_when_env_checked_for_secrets(context):
+    context.inspected_dockerfiles = context.dockerfiles
+
+
+@then("no Dockerfile sets a secret value in an ENV instruction.")
+def step_then_no_env_secrets(context):
+    for name, content in context.inspected_dockerfiles:
+        m = _SECRET_ENV_RE.search(content)
+        assert m is None, (
+            f"{name}/Dockerfile may contain a secret in an ENV/ARG instruction: {m.group()!r}"
+        )
+
+
+@given('"argocd/Dockerfile" and "argocd/kubernetes/kustomization.yaml"')
+def step_given_argocd_files(context):
+    context.argocd_dockerfile = (REPO_ROOT / "argocd" / "Dockerfile").read_text(encoding="utf-8")
+    context.argocd_kustomization = (
+        REPO_ROOT / "argocd" / "kubernetes" / "kustomization.yaml"
+    ).read_text(encoding="utf-8")
+
+
+@when("the Argo CD version is checked in both files")
+def step_when_argocd_version_checked(context):
+    m = _re.search(r"quay\.io/argoproj/argocd:(v[\d.]+)", context.argocd_dockerfile)
+    assert m, "Cannot find Argo CD version in argocd/Dockerfile"
+    context.argocd_version = m.group(1)
+
+
+@then("both files reference the same Argo CD version.")
+def step_then_argocd_versions_match(context):
+    assert context.argocd_version in context.argocd_kustomization, (
+        f"Argo CD version {context.argocd_version!r} from Dockerfile "
+        f"not found in kustomization.yaml"
+    )
+
+
+@given('"java-ui-browser/Dockerfile" and "android/Dockerfile"')
+def step_given_gradle_dockerfiles(context):
+    context.java_ui_dockerfile = (REPO_ROOT / "java-ui-browser" / "Dockerfile").read_text(
+        encoding="utf-8"
+    )
+    context.android_dockerfile = (REPO_ROOT / "android" / "Dockerfile").read_text(
+        encoding="utf-8"
+    )
+
+
+@when("the Gradle version is checked in both")
+def step_when_gradle_versions_checked(context):
+    m1 = _re.search(r"GRADLE_VERSION=([\d.]+)", context.java_ui_dockerfile)
+    m2 = _re.search(r"GRADLE_VERSION=([\d.]+)", context.android_dockerfile)
+    assert m1, "GRADLE_VERSION not found in java-ui-browser/Dockerfile"
+    assert m2, "GRADLE_VERSION not found in android/Dockerfile"
+    context.gradle_versions = (m1.group(1), m2.group(1))
+
+
+@then("both files pin the same Gradle version.")
+def step_then_same_gradle_version(context):
+    ui, android = context.gradle_versions
+    assert ui == android, (
+        f"Gradle version mismatch: java-ui-browser uses {ui!r}, android uses {android!r}"
+    )

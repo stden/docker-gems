@@ -84,13 +84,98 @@
       "source": "specs/docker_gems_requirements.md",
       "state": "mapped",
       "tag": "@REQ_AC_5"
+    },
+    {
+      "end_line": 10,
+      "exclusion_reason": null,
+      "id": "AC-6",
+      "line": 10,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 9,
+          "scenario": "every image has \"languages-and-frameworks\" in its category list"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_6"
+    },
+    {
+      "end_line": 11,
+      "exclusion_reason": null,
+      "id": "AC-7",
+      "line": 11,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 16,
+          "scenario": "every image except compilers, latex, and java-eks has both up.sh and up.cmd"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_7"
+    },
+    {
+      "end_line": 12,
+      "exclusion_reason": null,
+      "id": "AC-8",
+      "line": 12,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 23,
+          "scenario": "no Dockerfile sets a secret value in an ENV instruction"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_8"
+    },
+    {
+      "end_line": 13,
+      "exclusion_reason": null,
+      "id": "AC-9",
+      "line": 13,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 30,
+          "scenario": "argocd Dockerfile and kustomization.yaml use the same Argo CD version"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_9"
+    },
+    {
+      "end_line": 14,
+      "exclusion_reason": null,
+      "id": "AC-10",
+      "line": 14,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 37,
+          "scenario": "java-ui-browser and android pin the same Gradle version"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_10"
     }
   ],
   "schema_version": 1,
   "sources": [
     {
       "path": "specs/docker_gems_requirements.md",
-      "sha256": "85c4bc12ad4acc7a332170b7842925e9d244138e136ccc0d4f3419b3ffe7a1a1"
+      "sha256": "96371a227833db109b98c6e7a1bb8cc02922a24e3d2b6c7250a709a580ce8f15"
+    },
+    {
+      "path": "features/docker_gems_structure_checks.feature",
+      "sha256": "6349eeb6cdfaf0e080f961175ea6e2eda34111f44443cc9f09286a26f61c3cfb",
+      "note": "Manually written; not managed by convert-specs-to-bdd."
     }
   ]
 }
