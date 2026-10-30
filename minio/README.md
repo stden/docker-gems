@@ -41,6 +41,17 @@ docker exec minio mc ls local/my-bucket
 CI builds the image and verifies the MinIO and mc versions.
 The local test starts MinIO, creates a bucket, uploads a file, and lists it.
 
+The build compiles the official server and client sources with the current Go release.
+The runtime uses `alpine:latest` and the current CA bundle.
+The image contains no Go compiler or source cache.
+
+Upstream distributes the community server as source code only.
+Both upstream repositories are archived. Use this course image for local tests.
+Review the security scan before any deployment.
+
+[MinIO source instructions](https://github.com/minio/minio#source-only-distribution) ·
+[MinIO client source](https://github.com/minio/mc)
+
 [Dockerfile](https://github.com/stden/docker-gems/blob/main/minio/Dockerfile) ·
 [Docker tutorial](https://github.com/stden/docker-gems/blob/main/README.md) ·
 [Build results](https://github.com/stden/docker-gems/actions)
