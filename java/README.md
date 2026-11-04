@@ -1,6 +1,6 @@
 # stden/java
 
-Build and test Java projects with JDK 25 LTS and Maven 3 — shows how an official language image gives a complete build environment in one `FROM` line.
+Build and test Java projects with JDK 25 LTS and Maven 3.
 
 ## What you learn
 
