@@ -1,6 +1,6 @@
 # stden/rust
 
-Build, test, format, and lint Rust projects — shows how `rustup component add` extends an official toolchain image with optional components.
+Build, test, format, and lint Rust projects.
 
 ## What you learn
 
