@@ -1,6 +1,14 @@
 # stden/my-python-app
 
-Learn Docker networking with a Python website check and a MySQL query.
+A Python app that checks a website and queries MySQL — shows Docker Compose networking, build-cache layer optimization, and container health checks.
+
+## What you learn
+
+- How layer order affects the build cache: copy dependencies before source code
+- How `CMD` sets the default command that runs when the container starts
+- How Docker Compose starts multiple containers on a shared network
+- How a health check delays the application start until the database is ready
+- How named volumes keep database data between container restarts
 
 ## Contents
 
@@ -9,7 +17,7 @@ Learn Docker networking with a Python website check and a MySQL query.
 - SQL files that create and fill the sample database
 - The `tree` command to show the directory structure
 
-The working directory is `/x`. The default command runs `python ./my-test.py`.
+The working directory is `/workspace`. The default command runs `python ./my-test.py`.
 It requests `https://www.google.com`, then queries the `user` table in the database.
 Requests use a 15-second timeout. A failed website check stops the program before the database query.
 
