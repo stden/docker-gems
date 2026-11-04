@@ -1,6 +1,13 @@
 # stden/allure
 
-Generate Allure 3 and Allure 2 reports in CI from pytest, Java, Behave, and Playwright results.
+Generate Allure 3 and Allure 2 test reports in CI — shows how a multi-stage build downloads and verifies an archive from Maven Central, then copies only the CLI into the final stage.
+
+## What you learn
+
+- How a multi-stage build downloads and verifies an archive, then copies only the result
+- How `COPY --from` imports a verified CLI from the build stage into the runtime image
+- How `ENV ALLURE_NO_ANALYTICS=true` disables telemetry without a code change in the tool
+- How `npm audit signatures` verifies the supply chain of installed npm packages
 
 ## Overview
 
