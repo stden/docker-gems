@@ -25,8 +25,8 @@ RUN set -eux; \
 
 FROM node:slim
 
-# ALLURE_NO_ANALYTICS=true stops Allure 2 from sending usage data.
-# Its generated reports do not load an external analytics script.
+# Set ALLURE_NO_ANALYTICS=true to disable Allure 2 telemetry.
+# Its reports do not load an external analytics script.
 ENV ALLURE_NO_ANALYTICS=true
 
 # Allure 2 is a JVM application; node:slim has no JDK.

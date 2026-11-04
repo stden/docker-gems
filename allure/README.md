@@ -1,6 +1,6 @@
 # stden/allure
 
-Generate Allure 3 and Allure 2 test reports in CI — shows how a multi-stage build downloads and verifies an archive from Maven Central, then copies only the CLI into the final stage.
+Generate Allure 3 and Allure 2 test reports in CI.
 
 ## What you learn
 
