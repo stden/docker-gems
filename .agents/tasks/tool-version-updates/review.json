@@ -1,0 +1,10 @@
+{
+  "verdict": "CHANGES_REQUESTED",
+  "findings": [
+    "actions/checkout pin comment wrong — comment says '# v7' but v7 does not exist (current stable is v4); SHA 3d3c42e5aac5ba805825da76410c181273ba90b1 needs verification against the actual v4.x release SHA and the comment must be corrected.",
+    "Branch name collision on same-day re-runs — branch='chore/tool-versions-$(date +%Y-%m-%d)' produces the same name on multiple runs within one calendar day; a second git push fails because the remote branch already exists. Append github.run_number or similar to guarantee uniqueness.",
+    "git add -A stages all changes instead of the specific modified files — low harm on a fresh runner but violates the repository convention; stage rust-ci/Dockerfile, rust-desktop/Dockerfile, document-tools/Dockerfile, and ci/install-tools.sh explicitly.",
+    "Version strings with dots are unescaped in sed patterns for crane, proot, and jq — dots act as wildcards; escape them to avoid theoretically incorrect matches."
+  ],
+  "reviewDoc": "c:\\x\\docker-gems\\.agents\\tasks\\tool-version-updates\\review.md"
+}

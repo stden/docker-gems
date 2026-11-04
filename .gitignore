@@ -5,3 +5,7 @@ __pycache__/
 .vscode
 # Local kustomize overlays with account IDs (aws/README.md, step 7)
 overlays/
+*.pdf
+
+# Compiled PDFs — build locally with: typst compile docker-tutorial.typ docker-gems.pdf
+*.pdf
