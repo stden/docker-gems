@@ -6,7 +6,7 @@ COPY . .
 
 RUN mvn -B clean package -DskipTests
 
-FROM amazoncorretto:25
+FROM amazoncorretto:26
 
 WORKDIR /app
 
