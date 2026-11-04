@@ -1,6 +1,6 @@
 # stden/python
 
-Test and check Python code with pytest, Behave, Ruff, mypy, and uv — shows how `COPY --from` copies a single binary from another image without a package manager install.
+Test and check Python code with pytest, Behave, Ruff, mypy, and uv.
 
 ## What you learn
 
