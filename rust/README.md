@@ -1,6 +1,12 @@
 # stden/rust
 
-Build, test, format, and lint Rust projects.
+Build, test, format, and lint Rust projects — shows how `rustup component add` extends an official toolchain image with optional components.
+
+## What you learn
+
+- How the official `rust:latest` image manages the toolchain with `rustup`
+- How `rustup component add` extends the toolchain with optional tools
+- How to mount a Cargo project and run `cargo` commands in the container
 
 ## Overview
 
