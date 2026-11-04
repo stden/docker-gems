@@ -1,6 +1,6 @@
 # stden/code-quality
 
-Run seven static-analysis tools from one image — shows how a multi-stage build downloads and verifies tool binaries from GitHub, then copies only the binaries into a minimal final stage.
+Run seven static-analysis tools from one image.
 
 ## What you learn
 
