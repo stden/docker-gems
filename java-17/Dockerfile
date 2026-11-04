@@ -1,5 +1,5 @@
 # Build and test Java 17 projects with Maven 3.9 and common CI utilities.
-FROM maven:3.9-eclipse-temurin-17-alpine
+FROM maven:3.9-eclipse-temurin-26-alpine
 
 # Clear the default entry point to allow both java and mvn commands.
 ENTRYPOINT []
