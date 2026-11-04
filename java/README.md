@@ -2,6 +2,13 @@
 
 Build and test Java projects with JDK 25 LTS and Maven 3.
 
+## What you learn
+
+- How to use an official language image as a ready-made build environment
+- Why `ENTRYPOINT []` resets the base image entrypoint so direct commands work
+- How to mount a project directory and run Maven without a local JDK install
+- How a named volume keeps Maven dependency downloads between container runs
+
 ## Contents
 
 - Amazon Corretto JDK 25 LTS

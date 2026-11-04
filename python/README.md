@@ -1,6 +1,13 @@
 # stden/python
 
-Test and check Python code with uv, pytest, Behave, Ruff, and mypy.
+Test and check Python code with pytest, Behave, Ruff, mypy, and uv.
+
+## What you learn
+
+- How `COPY --from` fetches a single binary from a named image without a package manager
+- How a `RUN pip install` layer caches installed packages separately from source code
+- How `CMD ["bash"]` sets an interactive shell as the default container command
+- How volume mounts let you run project tests without a rebuild
 
 ## Overview
 

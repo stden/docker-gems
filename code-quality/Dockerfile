@@ -1,6 +1,7 @@
-# Static checks that many repositories run in CI: gitleaks (secrets), hadolint
-# (Dockerfiles), shellcheck (shell scripts), actionlint (GitHub workflows), typos
-# (spelling), semgrep (code patterns), and trivy (known CVEs).
+# Multi-stage build: the download stage fetches 6 tool binaries from GitHub and
+# checks each one with a SHA-256 digest. The final stage copies only the binaries.
+# Semgrep installs separately with pip in the final stage.
+# Tools: gitleaks, hadolint, shellcheck, actionlint, typos, trivy, semgrep.
 FROM debian:stable-slim AS download
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -9,8 +10,9 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends ca-certificates curl jq \
  && rm -rf /var/lib/apt/lists/*
 
-# Download the newest stable GitHub release of each tool. Check the file with the
-# SHA-256 digest in the release metadata. Usage: fetch TOOL REPOSITORY ASSET_REGEX.
+# Fetch each tool from its GitHub release. Verify the SHA-256 from the release metadata
+# so the build fails if the downloaded file does not match the expected checksum.
+# Usage: fetch TOOL REPOSITORY ASSET_REGEX.
 WORKDIR /tmp/download
 RUN set -eux; \
     mkdir /out; \
@@ -36,12 +38,9 @@ RUN set -eux; \
 
 FROM debian:stable-slim
 
-# Semgrep does not check for a new version at each run. The image gets the newest
-# release at each build. Semgrep writes its log and settings to /tmp, so it also
-# works for a user without a home directory (docker run --user).
-# Trivy does not send usage data and does not call check.trivy.dev. The vulnerability
-# database from this build is in /opt/trivy-cache. A scan can pass --skip-db-update
-# and stay offline.
+# ENV disables telemetry and configures each tool for non-interactive CI use.
+# Semgrep writes its log and settings to /tmp so it works for any user (docker run --user).
+# Trivy stores its vulnerability database in /opt/trivy-cache for offline scans.
 ENV PYTHONDONTWRITEBYTECODE=1 \
     SEMGREP_ENABLE_VERSION_CHECK=0 \
     SEMGREP_LOG_FILE=/tmp/semgrep.log \
@@ -51,18 +50,17 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     TRIVY_CACHE_DIR=/opt/trivy-cache
 
 # gitleaks reads the commit history with git. Semgrep runs on the Debian Python.
-# The mounted repository often has a different owner than the container user. Git
-# then refuses to read it, and gitleaks finds 0 commits and passes. Trust all
-# directories in this single-purpose container.
-# Install the security updates of the base image before the tools. The official image
-# can be days behind the security repository of the distribution.
+# A mounted repository often has a different owner than the container user. Git
+# then refuses to read it, and gitleaks scans 0 commits and passes without finding secrets.
+# Trust all directories in this single-purpose container to prevent that silent pass.
+# Install security updates before the tools to reduce CVE exposure in the final image.
 RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y --no-install-recommends ca-certificates git python3 python3-venv \
  && rm -rf /var/lib/apt/lists/* \
  && git config --system --add safe.directory '*'
 
-# Semgrep has its own environment, so pip does not change the Debian Python packages.
+# Semgrep runs in its own venv so pip does not change the Debian Python packages.
 RUN python3 -m venv /opt/semgrep \
  && /opt/semgrep/bin/pip install --no-cache-dir semgrep \
  && ln -s /opt/semgrep/bin/semgrep /usr/local/bin/semgrep

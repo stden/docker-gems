@@ -864,9 +864,7 @@ Name the safe release.
 Tutorial: build, test, and publish an image
 =========================================
 
-This example uses the existing `python/Dockerfile`.
-You must have Git, Docker, and a Docker Hub account with permission to publish images.
-Run the steps in the same Bash session.
+This example uses the existing `python/Dockerfile`. You must have Git, Docker, and a Docker Hub account with write access. Run all steps in one Bash session.
 
 🧪 Build first. Test next. Celebrate after the tests pass.
 
@@ -964,8 +962,7 @@ The image remains on the machine for the next run.
 Tutorial: run a local API
 ========================
 
-This example deploys the published `java-eks` image to your local Docker machine.
-The image name contains `eks`, but an EKS or Kubernetes cluster is not necessary.
+This example runs the published `java-eks` image on your local machine. No EKS or Kubernetes cluster is necessary.
 
 🚀 Start the API. Save the countdown for the demo.
 
@@ -1032,18 +1029,17 @@ Dockerfile: an image for a test environment
 
 📦 The Dockerfile is the recipe. The image is the result. The container runs it.
 
-The example uses [my-python-app/Dockerfile](my-python-app/Dockerfile).
-The table describes its main instructions.
+The example uses [my-python-app/Dockerfile](my-python-app/Dockerfile). The table describes its main instructions.
 
 | Instruction                        | Function                                                        |
 |------------------------------------|-----------------------------------------------------------------|
-| `FROM python:latest`               | Uses the official Python image as the base image                |
-| `RUN apt-get ... install -y tree`  | Installs the `tree` utility during the build                     |
-| `WORKDIR /x`                       | Sets the working directory inside the container                 |
-| `COPY requirements.txt ./`         | Copies the dependency file from the build directory             |
+| `FROM python:latest`               | Selects the official Python base image                          |
+| `RUN apt-get ... install -y tree`  | Installs the `tree` utility                                     |
+| `WORKDIR /workspace`               | Sets the working directory inside the container                 |
+| `COPY requirements.txt ./`         | Copies the dependency file before the source code               |
 | `RUN pip install -r ...`           | Installs the Python libraries                                   |
 | `COPY . .`                         | Copies the rest of the project files                            |
-| `CMD ["python", "./my-test.py"]`   | Sets the command that the container runs when it starts          |
+| `CMD ["python", "./my-test.py"]`   | Sets the default command when the container starts              |
 
 Docker builds layers in order from the top of the Dockerfile.
 Each step becomes a separate layer:
@@ -1067,7 +1063,7 @@ cd my-python-app
 docker build -t my-python-app .
 # Show the files in the container
 # The --rm option removes the container when it exits
-docker run --rm my-python-app tree /x
+docker run --rm my-python-app tree /workspace
 ```
 
 Return to the repository root before the Compose exercise:
@@ -1079,14 +1075,11 @@ cd ..
 Docker Compose: Python and MySQL
 ================================
 
-A database is necessary for the `my-python-app` application.
-The [docker-compose.yml](docker-compose.yml) file describes the application's containers.
-Docker Compose uses this YAML file to start the containers together.
+The `my-python-app` application needs a database. The [docker-compose.yml](docker-compose.yml) file describes both containers. Docker Compose starts them together.
 
 🤝 MySQL gets ready first. Python waits its turn.
 
-Run this example from the `docker-gems` repository root.
-The project name `docker-gems-course` identifies the containers, network, and volume for this exercise.
+Run this example from the `docker-gems` repository root. The project name `docker-gems-course` identifies the containers, network, and volume.
 
 Start the application and its database:
 

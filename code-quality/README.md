@@ -1,6 +1,13 @@
 # stden/code-quality
 
-Run gitleaks, hadolint, shellcheck, actionlint, typos, semgrep, and trivy from one image.
+Run seven static-analysis tools from one image.
+
+## What you learn
+
+- How a multi-stage build separates the tool download step from the final image
+- How `COPY --from` copies verified binaries from a build stage into the final stage
+- How `SHELL ["/bin/bash", "-o", "pipefail", "-c"]` makes a pipe fail at the first error
+- How `ENV` variables configure tool behavior for every container started from the image
 
 ## Overview
 

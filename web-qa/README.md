@@ -1,6 +1,13 @@
 # stden/web-qa
 
-Test web pages with Python, Chromium, Google Chrome, axe, and Lighthouse.
+Test web pages with Playwright, Chrome, axe, and Lighthouse in a multi-stage Python image.
+
+## What you learn
+
+- How a multi-stage build uses `COPY --from` to merge Node.js tools into a Python base image
+- Why security upgrades run after Playwright: Playwright adds its own apt packages first
+- How `PLAYWRIGHT_BROWSERS_PATH` controls where Playwright stores its browser download
+- How `DETECT_CHROMEDRIVER_VERSION=true` matches ChromeDriver to an installed Chrome version
 
 ## Overview
 

@@ -2,6 +2,12 @@
 
 Build, test, format, and lint Rust projects.
 
+## What you learn
+
+- How the official `rust:latest` image manages the toolchain with `rustup`
+- How `rustup component add` extends the toolchain with optional tools
+- How to mount a Cargo project and run `cargo` commands in the container
+
 ## Overview
 
 This image contains the current stable Rust toolchain from the official Rust base image.
