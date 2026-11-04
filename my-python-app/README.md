@@ -1,6 +1,6 @@
 # stden/my-python-app
 
-A Python app that checks a website and queries MySQL — shows Docker Compose networking, build-cache layer optimization, and container health checks.
+A Python app that checks a website and queries MySQL.
 
 ## What you learn
 
