@@ -1,0 +1,51 @@
+name: Copy images to Amazon ECR
+
+# Copy tested images from Docker Hub to Amazon ECR. Start it by hand from main.
+# It must have the repository variables AWS_ROLE_ARN and AWS_REGION, and an IAM role
+# for GitHub OIDC. aws/README.md shows the setup. GitHub stores no AWS key.
+on:
+  workflow_dispatch:
+    inputs:
+      images:
+        description: Image directories, separated by spaces
+        required: true
+        default: open-webui graphify codegraph java-eks
+
+permissions:
+  contents: read
+
+# A newer copy stops the older copy. The two copies do not run at the same time.
+concurrency:
+  group: aws-ecr
+  cancel-in-progress: true
+
+jobs:
+  copy:
+    name: Copy to ECR
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: 📥 Check out the repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: 🔎 Make sure the AWS_ROLE_ARN and AWS_REGION variables are set
+        env:
+          AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: bash ci/require-aws-settings.sh
+
+      - name: 🔐 Get short-term AWS credentials for AWS_ROLE_ARN with OIDC
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: 📦 Copy ${{ inputs.images }} from Docker Hub to ECR
+        env:
+          IMAGES: ${{ inputs.images }}
+        run: bash ci/copy-selected-images.sh

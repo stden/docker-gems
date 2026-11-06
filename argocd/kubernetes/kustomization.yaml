@@ -1,0 +1,40 @@
+# Install Argo CD with the tested stden/argocd image. The CRDs are too large for a
+# client-side apply, so use a server-side apply:
+#   kubectl apply -k argocd/kubernetes --server-side --force-conflicts
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: argocd
+resources:
+  - namespace.yaml
+  # The upstream manifest. Change the version together with argocd/Dockerfile.
+  - https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.6/manifests/install.yaml
+images:
+  - name: quay.io/argoproj/argocd
+    newName: stden/argocd
+    newTag: latest
+# stden/argocd is for linux/amd64 only.
+patches:
+  - target:
+      kind: Deployment
+    patch: |-
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: all
+      spec:
+        template:
+          spec:
+            nodeSelector:
+              kubernetes.io/arch: amd64
+  - target:
+      kind: StatefulSet
+    patch: |-
+      apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: all
+      spec:
+        template:
+          spec:
+            nodeSelector:
+              kubernetes.io/arch: amd64

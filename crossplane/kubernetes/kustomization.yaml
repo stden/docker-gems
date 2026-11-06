@@ -1,0 +1,8 @@
+# kubectl apply -k crossplane/kubernetes
+# Apply provider-config.yaml and repository.yaml after the providers are healthy,
+# because the providers create their types.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - namespace.yaml
+  - providers.yaml

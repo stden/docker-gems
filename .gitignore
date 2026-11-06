@@ -1,0 +1,17 @@
+.idea
+target
+__pycache__/
+*.pyc
+.vscode
+# Local kustomize overlays with account IDs (aws/README.md, step 7)
+overlays/
+*.pdf
+
+# Compiled PDFs — build locally with: typst compile docker-gems.typ docker-gems.pdf
+*.pdf
+
+# Git worktrees — local only, never commit
+.worktrees/
+
+# Agent task files — local only, never commit
+.agents/

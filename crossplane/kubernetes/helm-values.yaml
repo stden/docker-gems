@@ -1,0 +1,18 @@
+# Values for the Crossplane Helm chart. They add the settings that are necessary for the
+# restricted Pod Security level and that the chart does not set by default:
+#   helm install crossplane crossplane --repo https://charts.crossplane.io/stable \
+#     --namespace crossplane-system -f crossplane/kubernetes/helm-values.yaml --wait
+podSecurityContextCrossplane:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+podSecurityContextRBACManager:
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+securityContextCrossplane:
+  capabilities:
+    drop: ["ALL"]
+securityContextRBACManager:
+  capabilities:
+    drop: ["ALL"]

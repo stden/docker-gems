@@ -1,0 +1,10 @@
+# The pods run as a non-root user, so the namespace enforces the restricted Pod Security level.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: codegraph
+  labels:
+    app.kubernetes.io/part-of: docker-gems
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted

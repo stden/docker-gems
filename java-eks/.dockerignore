@@ -1,0 +1,6 @@
+# Files that the image build does not use. Docker does not read .gitignore.
+target/
+kubernetes/
+*.md
+*.cmd
+.gitignore
