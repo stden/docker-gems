@@ -13,6 +13,7 @@ rustc --version
 cargo --version
 clang --version
 mold --version
+protoc --version
 ld.lld --version
 jq --version
 

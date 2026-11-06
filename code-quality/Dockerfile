@@ -1,7 +1,7 @@
 # Multi-stage build: the download stage fetches 6 tool binaries from GitHub and
 # checks each one with a SHA-256 digest. The final stage copies only the binaries.
 # Semgrep installs separately with pip in the final stage.
-# Tools: gitleaks, hadolint, shellcheck, actionlint, typos, trivy, semgrep.
+# Tools: gitleaks, hadolint, shellcheck, shfmt, actionlint, typos, trivy, semgrep.
 FROM debian:stable-slim AS download
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -56,7 +56,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Install security updates before the tools to reduce CVE exposure in the final image.
 RUN apt-get update \
  && apt-get upgrade -y \
- && apt-get install -y --no-install-recommends ca-certificates git python3 python3-venv \
+ && apt-get install -y --no-install-recommends ca-certificates git python3 python3-venv shfmt \
  && rm -rf /var/lib/apt/lists/* \
  && git config --system --add safe.directory '*'
 
@@ -69,6 +69,7 @@ COPY --from=download /out/ /usr/local/bin/
 RUN gitleaks version \
  && hadolint --version \
  && shellcheck --version \
+ && shfmt --version \
  && actionlint -version \
  && typos --version \
  && semgrep --version \

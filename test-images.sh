@@ -17,6 +17,7 @@ ALL=(
   codegraph
   compilers
   cpp
+  cpp-ci
   cpp-cuda
   cpp-vulkan
   crossplane
@@ -32,6 +33,8 @@ ALL=(
   mailpit
   minio
   my-python-app
+  node-ci
+  ocr
   open-webui
   php
   postgres-vector-graph
@@ -548,7 +551,7 @@ run_image() {
     rabbitmq) test_rabbitmq ;;
     rust) test_rust ;;
     wiremock) test_wiremock ;;
-    allure|android|argocd|code-quality|codegraph|compilers|cpp-cuda|cpp-vulkan|crossplane|document-tools|graphify|open-webui|php|postgres-vector-graph|python-media|rust-ci|rust-desktop|rust-node|toolchains|web-qa)
+    allure|android|argocd|code-quality|codegraph|compilers|cpp-ci|cpp-cuda|cpp-vulkan|crossplane|document-tools|graphify|node-ci|ocr|open-webui|php|postgres-vector-graph|python-media|rust-ci|rust-desktop|rust-node|toolchains|web-qa)
       test_shared "$name"
       ;;
     *) return 2 ;;

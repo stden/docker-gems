@@ -76,6 +76,7 @@ Images
 | [`toolchains`](toolchains/README.md) | `ubuntu:24.04` | Compilers and interpreters: GCC, OpenJDK, Node.js, Python 3, Perl, PHP, Ruby, Go | [Overview](https://hub.docker.com/r/stden/toolchains) · [Tags](https://hub.docker.com/r/stden/toolchains/tags) | Developer tools, Languages & frameworks, Integration & delivery |
 | [`compilers`](compilers/README.md) | `debian:stable-slim` | C (GCC), C++ (g++), C# (Mono), D (DMD), Haskell (GHC), Free Pascal, Python 3 with NumPy and pandas, LaTeX | [Overview](https://hub.docker.com/r/stden/compilers) · [Tags](https://hub.docker.com/r/stden/compilers/tags) | Languages & frameworks, Developer tools |
 | [`cpp`](cpp/README.md) | `gcc:latest` | GCC, CMake, code coverage (gcovr, lcov), memory checks (valgrind) | [Overview](https://hub.docker.com/r/stden/cpp) · [Tags](https://hub.docker.com/r/stden/cpp/tags) | Developer tools, Languages & frameworks |
+| [`cpp-ci`](cpp-ci/README.md) | `ubuntu:24.04` | GCC 14, CMake, Ninja, ccache, and mold for building C and C++ projects in CI | [Overview](https://hub.docker.com/r/stden/cpp-ci) · [Tags](https://hub.docker.com/r/stden/cpp-ci/tags) | Developer tools, Languages & frameworks, Integration & delivery |
 | [`java`](java/README.md) | `maven:3-amazoncorretto-25` | JDK 25 (LTS) and Maven for Java builds and tests | [Overview](https://hub.docker.com/r/stden/java) · [Tags](https://hub.docker.com/r/stden/java/tags) | Languages & frameworks, Developer tools, Integration & delivery |
 | [`java-17`](java-17/README.md) | `maven:3.9-eclipse-temurin-17-alpine` | JDK 17 LTS and Maven 3.9 with git, curl, jq, and SSH tools | [Overview](https://hub.docker.com/r/stden/java-17) · [Tags](https://hub.docker.com/r/stden/java-17/tags) | Languages & frameworks, Developer tools, Integration & delivery |
 | [`java-eks`](java-eks/README.md) | `amazoncorretto:25` | A Spring Boot 4 REST API for AWS EKS. See [java-eks/README.md](java-eks/README.md). | [Overview](https://hub.docker.com/r/stden/java-eks) · [Tags](https://hub.docker.com/r/stden/java-eks/tags) | Languages & frameworks, Web servers |
@@ -101,10 +102,12 @@ Images
 | [`postgres-vector-graph`](postgres-vector-graph/README.md) | `postgres:18` | PostgreSQL with pgvector and Apache AGE for vector and graph queries | [Overview](https://hub.docker.com/r/stden/postgres-vector-graph) · [Tags](https://hub.docker.com/r/stden/postgres-vector-graph/tags) | Databases & storage, Data science, Languages & frameworks |
 | [`graphify`](graphify/README.md) | `python:latest` | Graphify knowledge graphs of code and documents, with an MCP server and an mcpo OpenAPI server | [Overview](https://hub.docker.com/r/stden/graphify) · [Tags](https://hub.docker.com/r/stden/graphify/tags) | Developer tools, Machine learning & AI, Languages & frameworks |
 | [`codegraph`](codegraph/README.md) | `node:latest` | CodeGraph code index with symbol, caller, impact, and affected-test queries, an MCP server, and an mcpo OpenAPI server | [Overview](https://hub.docker.com/r/stden/codegraph) · [Tags](https://hub.docker.com/r/stden/codegraph/tags) | Developer tools, Machine learning & AI, Languages & frameworks |
+| [`node-ci`](node-ci/README.md) | `node:slim` | Node.js, npm, pnpm, and Bun for JavaScript and TypeScript projects in CI | [Overview](https://hub.docker.com/r/stden/node-ci) · [Tags](https://hub.docker.com/r/stden/node-ci/tags) | Languages & frameworks, Developer tools, Integration & delivery |
+| [`ocr`](ocr/README.md) | `ubuntu:24.04` | Tesseract OCR 5 with English and Russian language data | [Overview](https://hub.docker.com/r/stden/ocr) · [Tags](https://hub.docker.com/r/stden/ocr/tags) | Developer tools, Languages & frameworks |
 | [`open-webui`](open-webui/README.md) | `ghcr.io/open-webui/open-webui:latest` | Open WebUI chat interface for Ollama and OpenAI-compatible APIs, with the embedding models | [Overview](https://hub.docker.com/r/stden/open-webui) · [Tags](https://hub.docker.com/r/stden/open-webui/tags) | Machine learning & AI, Web servers, Languages & frameworks |
 | [`argocd`](argocd/README.md) | `quay.io/argoproj/argocd:v3.5.6` | Argo CD for GitOps on Kubernetes and EKS, with the argocd CLI, helm, and kustomize | [Overview](https://hub.docker.com/r/stden/argocd) · [Tags](https://hub.docker.com/r/stden/argocd/tags) | Integration & delivery, Developer tools, Languages & frameworks |
 | [`crossplane`](crossplane/README.md) | `amazon/aws-cli:latest` | The crossplane CLI, kubectl, helm, and the AWS CLI to install and use Crossplane on EKS | [Overview](https://hub.docker.com/r/stden/crossplane) · [Tags](https://hub.docker.com/r/stden/crossplane/tags) | Integration & delivery, Developer tools, Languages & frameworks |
-| [`code-quality`](code-quality/README.md) | `debian:stable-slim` | gitleaks, hadolint, shellcheck, actionlint, typos, semgrep, and trivy for static checks in CI | [Overview](https://hub.docker.com/r/stden/code-quality) · [Tags](https://hub.docker.com/r/stden/code-quality/tags) | Developer tools, Security, Languages & frameworks |
+| [`code-quality`](code-quality/README.md) | `debian:stable-slim` | gitleaks, hadolint, shellcheck, shfmt, actionlint, typos, semgrep, and trivy for static checks in CI | [Overview](https://hub.docker.com/r/stden/code-quality) · [Tags](https://hub.docker.com/r/stden/code-quality/tags) | Developer tools, Security, Languages & frameworks |
 | [`allure`](allure/README.md) | `node:slim` | Allure Report 3 and Allure Report 2 to generate test reports from pytest, Java, Behave, and Playwright results | [Overview](https://hub.docker.com/r/stden/allure) · [Tags](https://hub.docker.com/r/stden/allure/tags) | Developer tools, Integration & delivery, Languages & frameworks |
 | [`php`](php/README.md) | `php:latest` | PHP CLI, Composer, PHPUnit, pcov coverage, and common extensions | [Overview](https://hub.docker.com/r/stden/php) · [Tags](https://hub.docker.com/r/stden/php/tags) | Languages & frameworks, Developer tools, Integration & delivery |
 | [`android`](android/README.md) | `eclipse-temurin:25-jdk` | JDK 25, the Android SDK (platforms 34 to 37, build-tools), and Gradle to build and test Android apps | [Overview](https://hub.docker.com/r/stden/android) · [Tags](https://hub.docker.com/r/stden/android/tags) | Developer tools, Integration & delivery, Languages & frameworks |
@@ -121,6 +124,7 @@ Select an image
 |------|-------|
 | Compile and run programs in several languages | [`compilers`](compilers/) |
 | Build C++, measure coverage, and check memory | [`cpp`](cpp/) |
+| Build C and C++ projects with GCC 14, Ninja, and ccache | [`cpp-ci`](cpp-ci/) |
 | Build a Java project and run Maven tests | [`java`](java/) |
 | Build a Java 17 project and run Maven tests | [`java-17`](java-17/) |
 | Start a REST API and open Swagger UI | [`java-eks`](java-eks/) |
@@ -135,6 +139,7 @@ Select an image
 | Build a Rust project, format the code, and run Clippy | [`rust`](rust/) |
 | Build a Rust backend and a Node.js frontend | [`rust-node`](rust-node/) |
 | Run browser, accessibility, and performance checks | [`web-qa`](web-qa/) |
+| Build and test JavaScript projects with Node.js, pnpm, and Bun | [`node-ci`](node-ci/) |
 | Test Kafka producer and consumer workflows | [`kafka`](kafka/) |
 | Mock HTTP endpoints for integration tests | [`wiremock`](wiremock/) |
 | Create PDFs or convert office documents | [`document-tools`](document-tools/) |
@@ -152,6 +157,7 @@ Select an image
 | Find secrets, known CVEs, and Dockerfile, shell, workflow, and spelling problems | [`code-quality`](code-quality/) |
 | Make HTML test reports from test results | [`allure`](allure/) |
 | Test a PHP project with PHPUnit and coverage | [`php`](php/) |
+| Read English and Russian text from images with Tesseract | [`ocr`](ocr/) |
 | Build, test, and lint an Android app | [`android`](android/) |
 
 The base images use the `latest` tag if it is compatible with the tools.
@@ -349,12 +355,12 @@ This option does not call `docker build`.
 
 The `up.sh` and `up.cmd` scripts build the image and run `test-images.sh --no-build`.
 They publish the image only if the check passes. The `up.cmd` script calls `bash`.
-The nineteen shared tool images use the publish helper [ci/publish-image.sh](ci/publish-image.sh).
+The twenty-three shared tool images use the publish helper [ci/publish-image.sh](ci/publish-image.sh).
 The helper also stops if the current branch is not `main`.
 
 GitHub Actions runs `./test-images.sh --no-build <image>` after each image build.
 The runner has Docker, so it runs the full container checks.
-The nineteen shared tool images each have a `smoke-test.sh` file. The test runner mounts the file
+The twenty-three shared tool images each have a `smoke-test.sh` file. The test runner mounts the file
 and runs functional checks inside the image. The database and Open WebUI tests use
 temporary data directories.
 

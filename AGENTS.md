@@ -53,7 +53,7 @@ This repository contains Docker images and examples for a QA course. Every agent
 - `r.sh` and `r.cmd` (in some images) — build and run locally.
 - `kubernetes/` (in some images) — manifests for Kubernetes and EKS, with a `kustomization.yaml`
   that sets the namespace and a `namespace.yaml` with Pod Security labels. See "Kubernetes manifests".
-- The nineteen shared tool images have a self-contained `smoke-test.sh`.
+- The twenty-three shared tool images have a self-contained `smoke-test.sh`.
   Both CI runners mount this file and run it with Bash. Keep the test files outside the built image.
   Their `up.sh` and `up.cmd` scripts call `ci/publish-image.sh`. This script must run on `main`.
   It stops before publication if a test fails.
@@ -348,6 +348,9 @@ follow the section "Check images for known CVEs". Before you commit:
    |------------------|------------------------------------------------------------------------------------------------|
    | `compilers`      | Run seven Hello world programs and compile two LaTeX documents. Check all nine results. |
    | `cpp`            | Compile a file with `g++ --coverage`, run it, then `gcovr` and `valgrind --error-exitcode=1`   |
+   | `cpp-ci`         | Build a CMake project with GCC 14, Ninja, and ccache, then get a ccache hit on the second build |
+   | `node-ci`        | Run a script with Node.js, npm, Bun, and pnpm                                                  |
+   | `ocr`            | Draw English and Russian text into PNG files and read it with Tesseract                        |
    | `java`           | `docker run --rm java:test bash -c 'java -version && mvn -version'` prints Java 25 and Maven 3 |
    | `java-eks`       | `mvn -B verify` (below), then run the container and get HTTP 200 from `/api/health`, `/api-docs` and `/swagger-ui/index.html` |
    | `java-run-swing` | `docker run --rm -v <dir with Hello.class>:/app java-run-swing:test xvfb-run -a java Hello` shows a `JFrame` and exits 0 |
@@ -370,7 +373,7 @@ follow the section "Check images for known CVEs". Before you commit:
    | `open-webui` | Start the server with a temporary data directory, create an administrator account, and call the API |
    | `argocd` | Write an Application, test an RBAC policy, render kustomize and Helm sources, start each component with `--help` |
    | `crossplane` | Build a Configuration package, convert an XRD, validate good and bad examples, check Helm and kubectl |
-   | `code-quality` | Each tool finds a planted problem and passes clean input: gitleaks, hadolint, shellcheck, actionlint, typos, semgrep, trivy |
+   | `code-quality` | Each tool finds a planted problem and passes clean input: gitleaks, hadolint, shellcheck, shfmt, actionlint, typos, semgrep, trivy |
    | `allure` | Generate Allure 3 and Allure 2 reports, history, and single-file reports from hand-written results |
    | `php` | Run PHPUnit with pcov coverage on a small Composer project, check a test that fails, and check the extensions |
    | `android` | Build, unit-test, and lint a Kotlin and Java app, check the APK, and check that no daemon stays alive |

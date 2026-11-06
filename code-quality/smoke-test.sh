@@ -9,6 +9,7 @@ cd "$work"
 gitleaks version
 hadolint --version
 shellcheck --version
+shfmt --version
 actionlint -version
 typos --version
 semgrep --version
@@ -77,6 +78,11 @@ echo $1
 SH
 shellcheck shell/good.sh
 expect_finding 1 SC2086 shellcheck shell/bad.sh
+
+# shfmt: a script with the wrong indentation fails the format check (-d exits 1 and prints a diff).
+printf '#!/bin/sh\nif true; then\necho hi\nfi\n' > shell/format-bad.sh
+shfmt -d shell/good.sh
+expect_finding 1 'echo hi' shfmt -d shell/format-bad.sh
 
 # actionlint: a job has a needs key for a job that does not exist, and shellcheck finds an
 # unquoted variable in a run step.

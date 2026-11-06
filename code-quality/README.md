@@ -18,13 +18,14 @@ This image has the static checks that many repositories run in CI:
 | [gitleaks](https://github.com/gitleaks/gitleaks) | Secrets in files and in the git history | it finds a secret |
 | [hadolint](https://github.com/hadolint/hadolint) | Dockerfiles | it finds a problem |
 | [shellcheck](https://www.shellcheck.net/) | Shell scripts | it finds a problem |
+| [shfmt](https://github.com/mvdan/sh) | Shell script formatting | it finds a formatting difference |
 | [actionlint](https://github.com/rhysd/actionlint) | GitHub Actions workflows, with shellcheck for `run` scripts | it finds a problem |
 | [typos](https://github.com/crate-ci/typos) | Spelling in code and documents | it finds a spelling mistake |
 | [semgrep](https://semgrep.dev/) | Code patterns from your rules | it finds a match and you set `--error` |
 | [trivy](https://github.com/aquasecurity/trivy) | Known CVEs in a file tree or a container image | it finds a CRITICAL CVE that has a fix and you set `--exit-code 1` |
 
 Each build installs the newest stable release of each tool. The build downloads gitleaks,
-hadolint, shellcheck, actionlint, typos, and trivy from their GitHub releases. It checks each
+hadolint, shellcheck, actionlint, typos, and trivy from their GitHub releases. Debian provides shfmt. It checks each
 file with the SHA-256 digest in the release metadata. The build installs Semgrep with pip in its
 own environment on the Debian Python. The build also stores the trivy vulnerability database.
 This database is large, so the image is much larger than the tool files alone.

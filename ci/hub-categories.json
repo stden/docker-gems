@@ -161,5 +161,19 @@
     "developer-tools",
     "integration-and-delivery",
     "languages-and-frameworks"
+  ],
+  "cpp-ci": [
+    "developer-tools",
+    "languages-and-frameworks",
+    "integration-and-delivery"
+  ],
+  "node-ci": [
+    "languages-and-frameworks",
+    "developer-tools",
+    "integration-and-delivery"
+  ],
+  "ocr": [
+    "developer-tools",
+    "languages-and-frameworks"
   ]
 }

@@ -8,7 +8,7 @@ ARG BINSTALL_VERSION=1.26.2
 RUN apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends \
-        build-essential ca-certificates clang curl git jq libssl-dev lld mold pkg-config \
+        build-essential ca-certificates clang curl git jq libssl-dev lld mold pkg-config protobuf-compiler \
     && rm -rf /var/lib/apt/lists/* \
     && rustup component add rustfmt clippy llvm-tools-preview
 

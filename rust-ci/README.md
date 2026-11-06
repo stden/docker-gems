@@ -16,7 +16,7 @@ This image adds CI tools to the current stable Rust toolchain:
 - `sqlx-cli` (`cargo sqlx` and `sqlx`) to manage SQLx migrations and offline query data.
 - `cargo-mutants` to find code that the tests do not check.
 - sccache to cache compiler output.
-- Clang, LLD, mold, Git, jq, OpenSSL headers, and `pkg-config`.
+- Clang, LLD, mold, Git, jq, OpenSSL headers, `pkg-config`, and `protoc` (Protocol Buffers).
 
 The Cargo tools are prebuilt binaries. A CI job does not compile them.
 The image installs them with `cargo-binstall`, and this installer stays in the image.
