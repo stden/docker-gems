@@ -1,6 +1,6 @@
 # Read text from images with Tesseract OCR 5: English and Russian language data.
 # Ubuntu 24.04 ships Tesseract 5. The Debian stable release ships Tesseract 4 language data.
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 # Install security updates of the base image, then Tesseract with the English and Russian data.
 # ImageMagick and the DejaVu fonts let a test draw text into an image.
