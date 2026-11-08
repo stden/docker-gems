@@ -83,8 +83,6 @@ jobs:
   build-and-publish:
     name: ${{ matrix.image }}
     needs: find-images
-    # An empty matrix fails the whole run, so skip this job when no image changed.
-    if: needs.find-images.outputs.images != '[]'
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     permissions:
