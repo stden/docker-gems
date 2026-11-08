@@ -8,14 +8,14 @@ ARG DMD_SHA256=cc381becf12894f3c8403f15d060f6ef172e60d65813a6b26dc32d9c4cfd908b
 
 # Install the security updates of the base image. The official image can be days
 # behind the security repository of the distribution.
-# Install the compilers, Python, PDF tools, and tree.
+# Install the compilers, the OpenJDK 25 development kit, Python, PDF tools, and tree.
 # Download the latest DMD compiler from dlang.org.
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
     texlive texlive-latex-extra texlive-fonts-recommended texlive-luatex poppler-utils \
-    g++ fp-compiler mono-mcs ghc \
+    g++ fp-compiler mono-mcs ghc openjdk-25-jdk-headless \
     python3 python3-venv \
     tree wget curl git ca-certificates && \
     test "$(dpkg --print-architecture)" = amd64 && \
@@ -28,7 +28,7 @@ RUN apt-get update && \
 RUN python3 -m venv /opt/venv && /opt/venv/bin/pip install --no-cache-dir numpy pandas
 ENV PATH="/opt/venv/bin:$PATH"
 RUN gcc --version && g++ --version && mcs --version && dmd --version && \
-    ghc --version && fpc -iV && python --version && \
+    ghc --version && javac -version && java -version && fpc -iV && python --version && \
     pdflatex --version && lualatex --version && pdftotext -v
 # Set the code directory.
 WORKDIR /x

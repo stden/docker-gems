@@ -71,6 +71,8 @@ This repository contains Docker images and examples for a QA course. Every agent
   - `java-eks/build.cmd`
   - `java-run-swing/Dockerfile` (`openjdk25`)
   - `android/Dockerfile` (`eclipse-temurin:25-jdk`)
+  - `compilers/Dockerfile` (`openjdk-25-jdk-headless`, the Debian stable package), the `OpenJDK 25`
+    text in `compilers/README.md`, and the `compilers` row in `README.md`
   - the `openjdk version "25` checks and the `maven:3-amazoncorretto-25` command in
     `test-images.sh`, `ci/test-built-image.sh`, and `ci/test-smoke-failures.sh`
   - the `java` row and the `mvn -B verify` command in this file
@@ -346,7 +348,7 @@ follow the section "Check images for known CVEs". Before you commit:
 
    | Image            | Smoke test                                                                                     |
    |------------------|------------------------------------------------------------------------------------------------|
-   | `compilers`      | Run seven Hello world programs and compile two LaTeX documents. Check all nine results. |
+   | `compilers`      | Run eight Hello world programs and compile two LaTeX documents. Check all ten results. |
    | `cpp`            | Compile a file with `g++ --coverage`, run it, then `gcovr` and `valgrind --error-exitcode=1`   |
    | `cpp-ci`         | Build a CMake project with GCC 14, Ninja, and ccache, then get a ccache hit on the second build |
    | `node-ci`        | Run a script with Node.js, npm, Bun, and pnpm                                                  |

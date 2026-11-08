@@ -20,8 +20,10 @@ case "$tool" in
   mcs) output=hello_csharp.exe ;;
   dmd) output=hello_d ;;
   ghc) output=hello_haskell ;;
+  javac) output=HelloWorld ;;
   fpc) output=hello_pascal ;;
   mono) exec bash "$1" ;;
+  java) exec bash "${@: -1}" ;;
   python3)
     [[ "$SCENARIO" != python_failure ]] || exit 25
     printf 'Hello, world!\n'
@@ -54,7 +56,7 @@ case "$tool" in
 esac
 for argument in "$@"; do
   case "$argument" in
-    *.c|*.cpp|*.cs|*.d|*.hs|*.pas) [[ -f "$argument" ]] ;;
+    *.c|*.cpp|*.cs|*.d|*.hs|*.java|*.pas) [[ -f "$argument" ]] ;;
   esac
 done
 cat > "$output" <<'PROGRAM'
@@ -74,7 +76,7 @@ PROGRAM
 chmod +x "$output"
 MOCK
 chmod +x "$WORK/bin/compiler"
-for tool in gcc g++ mcs dmd ghc fpc mono python3 pdflatex lualatex pdftotext; do
+for tool in gcc g++ mcs dmd ghc javac java fpc mono python3 pdflatex lualatex pdftotext; do
   ln -s compiler "$WORK/bin/$tool"
 done
 
@@ -89,7 +91,7 @@ for scenario in success compile_failure runtime_failure wrong_output python_fail
       printf 'FAIL %s: expected exit 0, got %s\n' "$scenario" "$status"
       exit 1
     fi
-    for language in C C++ 'C#' D Haskell Pascal Python pdfLaTeX LuaLaTeX; do
+    for language in C C++ 'C#' D Haskell Java Pascal Python pdfLaTeX LuaLaTeX; do
       if ! grep -Fxq "PASS $language" "$WORK/output"; then
         cat "$WORK/output"
         printf 'FAIL %s: no result for %s\n' "$scenario" "$language"

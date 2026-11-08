@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # Compile each example and check its result.
 set -euo pipefail
 
@@ -47,6 +47,9 @@ check_result D ./hello_d
 
 compile ghc -outputdir "$work" -o hello_haskell "$source_dir/hw_haskell.hs"
 check_result Haskell ./hello_haskell
+
+compile javac -d "$work" "$source_dir/hw_java.java"
+check_result Java java -cp "$work" HelloWorld
 
 compile fpc -FE"$work" -FU"$work" -ohello_pascal "$source_dir/hw_pascal.pas"
 check_result Pascal ./hello_pascal

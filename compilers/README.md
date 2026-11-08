@@ -1,13 +1,13 @@
 # stden/compilers
 
-Compile Hello, world! examples in seven languages and check PDF output with two LaTeX engines.
+Compile Hello, world! examples in eight languages and check PDF output with two LaTeX engines.
 ## What you learn
 
 You learn to use compilers in a Docker container.
 
 ## Overview
 
-This image contains GNU C, GNU C++, Mono C#, DMD for D, GHC for Haskell, Free Pascal, and Python.
+This image contains GNU C, GNU C++, Mono C#, DMD for D, GHC for Haskell, OpenJDK 25 for Java, Free Pascal, and Python.
 Python runs from a virtual environment with NumPy and pandas.
 The image also has pdfLaTeX, LuaLaTeX, PDF text tools, git, curl, wget, and tree.
 
@@ -48,6 +48,7 @@ The runner deletes all temporary files after each run.
 | C# | Mono C# and Mono | [hw.cs](https://github.com/stden/docker-gems/blob/main/compilers/hw.cs) |
 | D | DMD | [hw_d.d](https://github.com/stden/docker-gems/blob/main/compilers/hw_d.d) |
 | Haskell | GHC | [hw_haskell.hs](https://github.com/stden/docker-gems/blob/main/compilers/hw_haskell.hs) |
+| Java | OpenJDK 25 | [hw_java.java](https://github.com/stden/docker-gems/blob/main/compilers/hw_java.java) |
 | Pascal | Free Pascal | [hw_pascal.pas](https://github.com/stden/docker-gems/blob/main/compilers/hw_pascal.pas) |
 | Python | Python 3 | [hw_python.py](https://github.com/stden/docker-gems/blob/main/compilers/hw_python.py) |
 | PDF | pdfLaTeX and LuaLaTeX | [hw_latex.tex](https://github.com/stden/docker-gems/blob/main/compilers/hw_latex.tex) |
@@ -70,6 +71,9 @@ PASS D
 == Program in Haskell ==
 Hello, world!
 PASS Haskell
+== Program in Java ==
+Hello, world!
+PASS Java
 == Program in Pascal ==
 Hello, world!
 PASS Pascal
@@ -111,6 +115,13 @@ docker run --rm -v "$PWD":/workspace -w /workspace stden/compilers:latest \
   bash -c 'ghc -o app main.hs && ./app'
 ```
 
+For a Java source file named `Main.java` with the class `Main`:
+
+```sh
+docker run --rm -v "$PWD":/workspace -w /workspace stden/compilers:latest \
+  bash -c 'javac Main.java && java Main'
+```
+
 Start an interactive shell to use the other compilers:
 
 ```sh
@@ -123,7 +134,7 @@ If the included tools are not sufficient, install extra project dependencies in 
 
 ## Source and checks
 
-The smoke test runs the examples and checks all nine results.
+The smoke test runs the examples and checks all ten results.
 Both CI runners use this test.
 The regression test checks compile failures, runtime failures, incorrect text, PDF failures, and temporary file cleanup.
 
