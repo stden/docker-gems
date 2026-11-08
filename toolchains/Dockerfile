@@ -1,7 +1,7 @@
 # A compiler and interpreter set for CI jobs and local tests. The image has the toolchains
 # of the Ubuntu 24.04 packages, so a job starts without installing them.
 # Ubuntu 24.04 is the same release as the runs-on image ubuntu-latest of GitHub Actions.
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 # Install the security updates of the base image, then the toolchains of the job.
 # Git reads the repository history, and the CA bundle lets tools use HTTPS.
