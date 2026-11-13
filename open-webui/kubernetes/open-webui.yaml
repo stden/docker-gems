@@ -1,0 +1,135 @@
+# Run Open WebUI with its data on a persistent volume.
+# Keep a copy of the secret key. Before you apply this file, create the key:
+#   kubectl -n open-webui create secret generic open-webui \
+#     --from-literal=WEBUI_SECRET_KEY="$(openssl rand -hex 32)"
+# Open the web page from your computer:
+#   kubectl -n open-webui port-forward service/open-webui 3000:80
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: open-webui-data
+  labels:
+    app.kubernetes.io/name: open-webui
+  annotations:
+    # The volume holds all chats and accounts. Argo CD must not prune it.
+    argocd.argoproj.io/sync-options: Prune=false
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: open-webui
+  labels:
+    app.kubernetes.io/name: open-webui
+spec:
+  # One pod at a time: the volume is ReadWriteOnce and the database is SQLite.
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: open-webui
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: open-webui
+    spec:
+      automountServiceAccountToken: false
+      # The image is for linux/amd64 only.
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: open-webui
+          image: stden/open-webui:latest
+          env:
+            - name: WEBUI_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: open-webui
+                  key: WEBUI_SECRET_KEY
+            # The pod mounts the volume at /data. A volume at /app/backend/data hides
+            # the embedding models in the image, because Kubernetes does not copy them.
+            - name: DATA_DIR
+              value: /data
+            - name: STATIC_DIR
+              value: /tmp/static
+            - name: HOME
+              value: /tmp
+            # The image has the embedding models, so do not download models.
+            - name: OFFLINE_MODE
+              value: "true"
+            # This example has no Ollama server. To use one, set OLLAMA_BASE_URL and change this
+            # setting. Do both before the first start, or later in the admin settings.
+            - name: ENABLE_OLLAMA_API
+              value: "false"
+          ports:
+            - name: http
+              containerPort: 8080
+          startupProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5
+            failureThreshold: 60
+          # /ready also checks the database. Liveness uses /health, so a database
+          # problem does not restart the pod.
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 20
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 500m
+              memory: 2Gi
+            limits:
+              memory: 2Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: open-webui-data
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: open-webui
+  labels:
+    app.kubernetes.io/name: open-webui
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: open-webui
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

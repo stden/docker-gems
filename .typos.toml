@@ -1,0 +1,3 @@
+[default.extend-words]
+# certifi is the Python SSL certificate bundle package (PyPI: certifi).
+certifi = "certifi"

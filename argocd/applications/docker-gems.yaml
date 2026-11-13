@@ -1,0 +1,40 @@
+# One Argo CD Application for each application of this repository (GitOps).
+# Argo CD applies <app>/kubernetes from GitHub and keeps the cluster equal to git.
+# Create the secrets of the applications first (aws/README.md, steps 3 and 4).
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: docker-gems
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - list:
+        elements:
+          - app: open-webui
+            namespace: open-webui
+          - app: graphify
+            namespace: graphify
+          - app: codegraph
+            namespace: codegraph
+          - app: java-eks
+            namespace: eks-demo
+  template:
+    metadata:
+      name: "{{.app}}"
+    spec:
+      project: docker-gems
+      source:
+        repoURL: https://github.com/stden/docker-gems.git
+        targetRevision: main
+        path: "{{.app}}/kubernetes"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{.namespace}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - ServerSideApply=true

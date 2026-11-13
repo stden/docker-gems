@@ -1,0 +1,72 @@
+# The AWS provider for Amazon ECR, with EKS Pod Identity. Install Crossplane first
+# (crossplane/README.md). The ECR provider uses the service account provider-aws.
+# Give that service account an IAM role with an EKS Pod Identity association.
+#
+# Crossplane runs each provider in a Deployment. These runtime configurations add the
+# settings for the restricted Pod Security level.
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: restricted
+spec:
+  deploymentTemplate:
+    spec:
+      selector: {}
+      template:
+        spec:
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: package-runtime
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+---
+apiVersion: pkg.crossplane.io/v1beta1
+kind: DeploymentRuntimeConfig
+metadata:
+  name: aws-pod-identity
+spec:
+  serviceAccountTemplate:
+    metadata:
+      name: provider-aws
+  deploymentTemplate:
+    spec:
+      selector: {}
+      template:
+        spec:
+          securityContext:
+            runAsNonRoot: true
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: package-runtime
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop: ["ALL"]
+---
+# The family provider owns the ProviderConfig types and calls no AWS API.
+# Use the same version for both providers. Crossplane installs the family provider as a
+# dependency of provider-aws-ecr with this name. With another name, Crossplane installs a
+# second copy and cannot resolve the dependencies of both providers.
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: crossplane-contrib-provider-family-aws
+spec:
+  package: xpkg.crossplane.io/crossplane-contrib/provider-family-aws:v2.9.0
+  runtimeConfigRef:
+    name: restricted
+---
+apiVersion: pkg.crossplane.io/v1
+kind: Provider
+metadata:
+  name: provider-aws-ecr
+spec:
+  package: xpkg.crossplane.io/crossplane-contrib/provider-aws-ecr:v2.9.0
+  runtimeConfigRef:
+    name: aws-pod-identity

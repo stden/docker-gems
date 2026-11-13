@@ -1,0 +1,143 @@
+# Index a git repository with CodeGraph and publish its MCP tools with mcpo on port 8000.
+# Create the API key before you apply this file:
+#   kubectl -n codegraph create secret generic codegraph-tools \
+#     --from-literal=MCPO_API_KEY="$(openssl rand -hex 32)"
+# Set REPOSITORY_URL to your repository. A restart indexes it again:
+#   kubectl -n codegraph rollout restart deployment/codegraph-tools
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: codegraph-tools
+  labels:
+    app.kubernetes.io/name: codegraph-tools
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: codegraph-tools
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: codegraph-tools
+    spec:
+      automountServiceAccountToken: false
+      # The image is for linux/amd64 only.
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: index
+          image: stden/codegraph:latest
+          env:
+            - name: REPOSITORY_URL
+              value: https://github.com/stden/docker-gems.git
+            - name: HOME
+              value: /tmp
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -euo pipefail
+              git clone --quiet --depth 1 "$REPOSITORY_URL" /work/repo
+              cd /work/repo
+              codegraph init .
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: work
+              mountPath: /work
+            - name: tmp
+              mountPath: /tmp
+      containers:
+        - name: mcpo
+          image: stden/codegraph:latest
+          env:
+            - name: MCPO_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: codegraph-tools
+                  key: MCPO_API_KEY
+            - name: HOME
+              value: /tmp
+            # Keep the MCP server in the process tree of mcpo.
+            - name: CODEGRAPH_NO_DAEMON
+              value: "1"
+            # A project with fewer than 500 files gets only explore, search, and node.
+            - name: CODEGRAPH_MCP_TOOLS
+              value: explore,search,node,callers,callees,impact
+          command: ["mcpo"]
+          args:
+            - --port
+            - "8000"
+            - --api-key
+            - $(MCPO_API_KEY)
+            - --strict-auth
+            - --
+            - codegraph
+            - serve
+            - --mcp
+            - --path
+            - /work/repo
+            - --no-watch
+          ports:
+            - name: http
+              containerPort: 8000
+          # The API key is necessary for every HTTP path, so the probes check the TCP port.
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: work
+              mountPath: /work
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: work
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: codegraph-tools
+  labels:
+    app.kubernetes.io/name: codegraph-tools
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: codegraph-tools
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http

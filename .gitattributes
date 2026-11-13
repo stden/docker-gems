@@ -1,0 +1,6 @@
+# Force LF line endings for all text files.
+# This prevents CRLF from breaking shell scripts on Windows checkouts.
+* text=auto eol=lf
+
+# Windows batch scripts keep CRLF.
+*.cmd text eol=crlf

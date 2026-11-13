@@ -1,0 +1,18 @@
+[tools]
+python = "3.13.18"
+java = "25"
+
+[tasks.check]
+run = "git diff --check"
+
+[tasks."my-python-app:syntax"]
+run = "python -m compileall -q ."
+dir = "my-python-app"
+
+[tasks."java-eks:build"]
+run = "./mvnw verify"
+dir = "java-eks"
+
+[tasks."java-eks:test"]
+run = "./mvnw test"
+dir = "java-eks"

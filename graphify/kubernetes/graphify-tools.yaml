@@ -1,0 +1,142 @@
+# Build a Graphify graph of a git repository and publish its tools with mcpo on port 8000.
+# Create the API key before you apply this file:
+#   kubectl -n graphify create secret generic graphify-tools \
+#     --from-literal=MCPO_API_KEY="$(openssl rand -hex 32)"
+# Set REPOSITORY_URL to your repository. A restart builds the graph again:
+#   kubectl -n graphify rollout restart deployment/graphify-tools
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: graphify-tools
+  labels:
+    app.kubernetes.io/name: graphify-tools
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: graphify-tools
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: graphify-tools
+    spec:
+      automountServiceAccountToken: false
+      # The image is for linux/amd64 only.
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      initContainers:
+        - name: build-graph
+          image: stden/graphify:latest
+          env:
+            - name: REPOSITORY_URL
+              value: https://github.com/stden/docker-gems.git
+            - name: HOME
+              value: /tmp
+            # Code extraction only: never call a language model.
+            - name: GRAPHIFY_BACKEND
+              value: none
+            # Graphify starts one worker for each CPU of the node, not of the limit.
+            # Use the CPU request, or the extraction can use more than the memory limit.
+            - name: GRAPHIFY_MAX_WORKERS
+              value: "2"
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -euo pipefail
+              git clone --quiet --depth 1 "$REPOSITORY_URL" /graph/repo
+              cd /graph/repo
+              graphify extract . --code-only
+              graphify cluster-only . --no-label --no-viz
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: graph
+              mountPath: /graph
+            - name: tmp
+              mountPath: /tmp
+      containers:
+        - name: mcpo
+          image: stden/graphify:latest
+          env:
+            - name: MCPO_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: graphify-tools
+                  key: MCPO_API_KEY
+            - name: HOME
+              value: /tmp
+          command: ["mcpo"]
+          args:
+            - --port
+            - "8000"
+            - --api-key
+            - $(MCPO_API_KEY)
+            - --strict-auth
+            - --
+            - graphify-mcp
+            - /graph/repo/graphify-out/graph.json
+          ports:
+            - name: http
+              containerPort: 8000
+          # The API key is necessary for every HTTP path, so the probes check the TCP port.
+          readinessProbe:
+            tcpSocket:
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: graph
+              mountPath: /graph
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: graph
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: graphify-tools
+  labels:
+    app.kubernetes.io/name: graphify-tools
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: graphify-tools
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http

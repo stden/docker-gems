@@ -1,0 +1,9 @@
+# Managed resources that name no provider configuration use this one.
+# The provider gets its AWS credentials from EKS Pod Identity.
+apiVersion: aws.m.upbound.io/v1beta1
+kind: ClusterProviderConfig
+metadata:
+  name: default
+spec:
+  credentials:
+    source: PodIdentity

@@ -1,0 +1,42 @@
+name: Check tool versions
+on:
+  schedule:
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    name: Check tool versions
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: 📥 Check out the repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
+        with:
+          persist-credentials: true
+      - name: 🔍 Check tool versions
+        id: check_versions
+        run: bash ci/check-tool-versions.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+      - name: 🔄 If outdated, create a PR with updated versions
+        if: steps.check_versions.outcome == 'failure'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          branch="chore/tool-versions-$(date +%Y-%m-%d)"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add -A
+          git commit -m "chore: update tool versions (automated)"
+          git push origin "$branch"
+          gh pr create \
+            --title "chore: update tool versions (automated)" \
+            --body "$(git show --stat HEAD | tail -n +2)" \
+            --head "$branch" \
+            --base main
