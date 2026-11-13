@@ -1,6 +1,7 @@
 [tools]
 python = "3.13.18"
-java = "25"
+java = "temurin-25.0.5+8.0.LTS"
+maven = "3.10.0"
 
 [tasks.check]
 run = "git diff --check"
