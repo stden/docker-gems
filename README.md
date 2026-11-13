@@ -1305,6 +1305,34 @@ docker image rm python:latest "$DOCKER_HUB_USER/python:latest"
 
 This command removes the local tags. It does not delete the image from Docker Hub.
 
+Docker Gems illustrations
+=========================
+
+🎨 Each picture shows one idea from this lesson.
+
+These pictures show the containers of this course. The built-in image generator made them.
+
+A harbor of possibilities
+-------------------------
+
+A blue whale carries three gem containers across the sea at dawn.
+
+![A blue whale with gem containers at dawn.](docs/illustrations/2026-11-13/docker-gems-harbor.png)
+
+Small containers, big possibilities
+-----------------------------------
+
+Three containers hold tools for code, tests, and data.
+
+![Three small container workshops for code, tests, and data.](docs/illustrations/2026-11-13/docker-gems-workshop.png)
+
+Build your next horizon
+-----------------------
+
+A path of containers leads from a laptop to the sunrise.
+
+![A laptop beside a container path above the clouds.](docs/illustrations/2026-11-13/docker-gems-horizon.png)
+
 Claude Code prompt
 ==================
 
