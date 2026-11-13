@@ -1,7 +1,7 @@
 # Build and test Rust applications that use GTK and X11.
 FROM rust:latest
 
-ARG BINSTALL_VERSION=1.26.2
+ARG BINSTALL_VERSION=1.27.0
 
 # Install the security updates of the base image before the tools. The official image
 # can be days behind the security repository of the distribution.
@@ -19,8 +19,8 @@ RUN apt-get update \
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN set -eu; \
     case "$(uname -m)" in \
-        x86_64) binstall_sha=9e0e064f189a9abb9f8df5fb93c3c810ef5cc19e7212d998c7a64c9e4d3527d5 ;; \
-        aarch64) binstall_sha=a235250cd684af9bf1e3a1e4c216b1d36e6c553553d5d789744f27689d81c2d6 ;; \
+        x86_64) binstall_sha=b2e4b70fcddc5bd6fd90c5cf8dc17b4cf0ea54a3db16c65ee0307f42c9bd3187 ;; \
+        aarch64) binstall_sha=84f2afefd325e52c92702a1f2a396902301ccdafd7614270cbbf46b9cff3accf ;; \
         *) echo "Unsupported CPU architecture." >&2; exit 1 ;; \
     esac; \
     curl -fsSL --retry 3 \

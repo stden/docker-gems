@@ -170,7 +170,7 @@ EOF
     ;;
   java-ui-browser)
     capture -- bash -c 'java --version && gradle --version && google-chrome --version && git --version && python3 --version && python3 -c "import venv, ctypes; ctypes.CDLL(\"libatomic.so.1\")"'
-    expect_out "$output" 'openjdk 27' 'Gradle 9.8.2' 'Google Chrome' 'git version' 'Python 3'
+    expect_out "$output" 'openjdk 27' 'Gradle 9.9.1' 'Google Chrome' 'git version' 'Python 3'
     ;;
   latex)
     src=$(mktemp -d)

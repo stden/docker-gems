@@ -21,7 +21,7 @@ lint. It contains:
 - Build-tools 37.0.0, the newest stable release. `aapt2`, `apksigner`, and `zipalign` are
   on the `PATH`. The image also has Build-tools 36.0.0, because AGP 9.4 uses it by default.
 - The SDK platforms `android-34`, `android-35`, `android-36`, `android-37.0`, and `android-37.2`.
-- Gradle 9.8.2 for projects without a wrapper, checked with its SHA-256.
+- Gradle 9.9.1 for projects without a wrapper, checked with its SHA-256.
 - git, curl, and unzip.
 
 The image accepts the Android SDK licenses during its build. Read the
@@ -106,13 +106,13 @@ debug APK with the debug key, `CN=Android Debug`.
 
 ### Step 6: Add a wrapper to a project without one
 
-The `gradle` command is Gradle 9.8.2. Create the wrapper once, with the checksum of the
+The `gradle` command is Gradle 9.9.1. Create the wrapper once, with the checksum of the
 distribution:
 
 ```sh
 docker run --rm -v "$PWD":/workspace -v android-gradle:/root/.gradle \
-  stden/android:latest gradle --no-daemon wrapper --gradle-version 9.8.2 \
-  --gradle-distribution-sha256-sum 21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
+  stden/android:latest gradle --no-daemon wrapper --gradle-version 9.9.1 \
+  --gradle-distribution-sha256-sum d8a18a7a841dd5df825d35a685fad6f2d7f12ac0c280e57b67c27b4a520ba228
 ```
 
 Commit the files that the command writes.

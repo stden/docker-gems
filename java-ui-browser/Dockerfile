@@ -2,8 +2,8 @@
 FROM eclipse-temurin:27-jdk-resolute
 
 # Pin the Gradle version to verify the archive with SHA-256.
-ARG GRADLE_VERSION=9.8.2
-ARG GRADLE_SHA256=21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
+ARG GRADLE_VERSION=9.9.1
+ARG GRADLE_SHA256=d8a18a7a841dd5df825d35a685fad6f2d7f12ac0c280e57b67c27b4a520ba228
 
 ENV GRADLE_HOME=/opt/gradle
 ENV GRADLE_USER_HOME=/home/tester/.gradle

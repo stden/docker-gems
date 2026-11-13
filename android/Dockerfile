@@ -12,8 +12,8 @@ ARG CMDLINE_TOOLS_SHA256=4e4c464f145a7512b57d088ac6c278c03c9eea610886b35a5e0804e
 ARG BUILD_TOOLS_VERSION=37.0.0
 ARG AGP_BUILD_TOOLS_VERSION=36.0.0
 # Gradle for projects without a wrapper. The checksum is from services.gradle.org.
-ARG GRADLE_VERSION=9.8.2
-ARG GRADLE_SHA256=21bd5da2de49b642904077f38c0efdc7778e92b3ed0889392dca61b97e389607
+ARG GRADLE_VERSION=9.9.1
+ARG GRADLE_SHA256=d8a18a7a841dd5df825d35a685fad6f2d7f12ac0c280e57b67c27b4a520ba228
 # The command-line tools 22.0 contain Bouncy Castle 1.79 with known vulnerabilities.
 # Replace it with the newest release for the lint, apkanalyzer, and resourceshrinker
 # launchers. The checksums are from Maven Central (<artifact>-<version>.jar.sha256).

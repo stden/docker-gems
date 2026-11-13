@@ -356,7 +356,7 @@ follow the section "Check images for known CVEs". Before you commit:
    | `java`           | `docker run --rm java:test bash -c 'java -version && mvn -version'` prints Java 25 and Maven 3 |
    | `java-eks`       | `mvn -B verify` (below), then run the container and get HTTP 200 from `/api/health`, `/api-docs` and `/swagger-ui/index.html` |
    | `java-run-swing` | `docker run --rm -v <dir with Hello.class>:/app java-run-swing:test xvfb-run -a java Hello` shows a `JFrame` and exits 0 |
-   | `java-ui-browser` | `docker run --rm java-ui-browser:test bash -c 'java --version && gradle --version && google-chrome --version && git --version && python3 --version'` prints Java 27, Gradle 9.8.2, Google Chrome, git and Python 3. `python3 -c 'import venv'` and `libatomic.so.1` must load |
+   | `java-ui-browser` | `docker run --rm java-ui-browser:test bash -c 'java --version && gradle --version && google-chrome --version && git --version && python3 --version'` prints Java 27, Gradle 9.9.1, Google Chrome, git and Python 3. `python3 -c 'import venv'` and `libatomic.so.1` must load |
    | `latex`          | `pdflatex` a small Russian document, then compile and link a Boost.Filesystem program          |
    | `my-python-app`  | `docker compose up --build --abort-on-container-exit --exit-code-from app` twice (new volume, then the same volume), then `docker compose down -v` |
    | `python`         | `docker run --rm python:test bash -c 'python --version && uv --version && pytest --version && behave --version && ruff --version && mypy --version'` prints Python, uv, pytest, Behave, Ruff and mypy |

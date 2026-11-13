@@ -211,7 +211,7 @@ test_java_ui_browser() {
   echo "Check Java, Gradle, Chrome, git, Python, venv, and libatomic"
   local output
   output=$(docker run --rm "java-ui-browser:${IMAGE_TAG}" bash -c 'java --version && gradle --version && google-chrome --version && git --version && python3 --version && python3 -c "import venv, ctypes; ctypes.CDLL(\"libatomic.so.1\")"' 2>&1) || { printf '%s\n' "$output" >&2; return 1; }
-  expect_lines "$output" 'openjdk 27' 'Gradle 9.8.2' 'Google Chrome' 'git version' 'Python 3'
+  expect_lines "$output" 'openjdk 27' 'Gradle 9.9.1' 'Google Chrome' 'git version' 'Python 3'
 }
 
 test_latex() {

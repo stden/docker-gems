@@ -8,7 +8,7 @@ You learn to use java-ui-browser in a Docker container.
 ## Contents
 
 - Eclipse Temurin JDK 27
-- Gradle 9.8.2
+- Gradle 9.9.1
 - Stable Google Chrome
 - Git and Python 3 with `venv`
 - `libatomic` for browser test tools
