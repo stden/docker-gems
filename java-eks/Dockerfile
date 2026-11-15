@@ -1,5 +1,5 @@
 # Build with the official Maven 3 image and Amazon Corretto 25 (LTS).
-FROM maven:3-amazoncorretto-25 AS builder
+FROM maven:3-amazoncorretto-27 AS builder
 
 WORKDIR /app
 COPY . .
