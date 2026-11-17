@@ -1,6 +1,6 @@
 # NVIDIA publishes CUDA development images with versioned tags.
 # https://hub.docker.com/r/nvidia/cuda/tags?name=devel-ubuntu26.04
-FROM nvidia/cuda:13.4.3-devel-ubuntu26.04
+FROM nvidia/cuda:13.5.0-devel-ubuntu26.04
 
 # Install the security updates of the base image. The official image can be days
 # behind the security repository of the distribution.
