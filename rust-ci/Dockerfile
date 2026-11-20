@@ -1,5 +1,5 @@
 # Build and test Rust projects with current stable tools.
-FROM rust:latest
+FROM rust:1.100.0
 
 ARG BINSTALL_VERSION=1.27.0
 

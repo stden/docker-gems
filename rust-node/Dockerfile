@@ -1,5 +1,5 @@
 FROM node:latest AS node-tools
-FROM rust:latest
+FROM rust:1.100.0
 
 COPY --from=node-tools /usr/local/bin/node /usr/local/bin/node
 COPY --from=node-tools /usr/local/lib/node_modules /usr/local/lib/node_modules

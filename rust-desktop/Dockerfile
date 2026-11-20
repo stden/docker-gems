@@ -1,5 +1,5 @@
 # Build and test Rust applications that use GTK and X11.
-FROM rust:latest
+FROM rust:1.100.0
 
 ARG BINSTALL_VERSION=1.27.0
 
