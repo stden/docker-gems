@@ -72,7 +72,7 @@ RUN set -eux; \
 RUN set -eux; \
     lib="${ANDROID_HOME}/cmdline-tools/latest/lib"; \
     for artifact in bcprov bcpkix bcutil; do \
-      curl -fsSLo "/tmp/${artifact}.jar" \
+      curl -fsSL --retry 5 --retry-delay 10 -o "/tmp/${artifact}.jar" \
         "https://repo1.maven.org/maven2/org/bouncycastle/${artifact}-jdk18on/${BC_VERSION}/${artifact}-jdk18on-${BC_VERSION}.jar"; \
     done; \
     printf '%s  /tmp/bcprov.jar\n%s  /tmp/bcpkix.jar\n%s  /tmp/bcutil.jar\n' \
