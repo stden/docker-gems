@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: eks-demo-test
+  jackson:
+    default-property-inclusion: NON_NULL
+
+# Disable Swagger UI for tests
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

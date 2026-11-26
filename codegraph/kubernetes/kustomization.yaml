@@ -1,0 +1,8 @@
+# kubectl apply -k codegraph/kubernetes
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: codegraph
+resources:
+  - namespace.yaml
+  - codegraph-tools.yaml
+  - codegraph-job.yaml

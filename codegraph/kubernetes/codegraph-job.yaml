@@ -1,0 +1,69 @@
+# Index a git repository with CodeGraph and list the tests that the last commit affects.
+# Set REPOSITORY_URL to your repository. Read the result with:
+#   kubectl -n codegraph logs job/codegraph-affected-tests
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: codegraph-affected-tests
+  labels:
+    app.kubernetes.io/name: codegraph
+spec:
+  backoffLimit: 1
+  activeDeadlineSeconds: 900
+  ttlSecondsAfterFinished: 86400
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: codegraph
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      # The image is for linux/amd64 only.
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: codegraph
+          image: stden/codegraph:latest
+          env:
+            - name: REPOSITORY_URL
+              value: https://github.com/stden/docker-gems.git
+            - name: HOME
+              value: /tmp
+          command: ["bash", "-c"]
+          args:
+            - |
+              set -euo pipefail
+              git clone --quiet --depth 2 "$REPOSITORY_URL" /work/repo
+              cd /work/repo
+              codegraph init .
+              codegraph status .
+              echo "Tests affected by the last commit:"
+              # --root also lists the files of a first commit, which has no parent.
+              git diff-tree --no-commit-id --name-only -r --root HEAD | codegraph affected --stdin
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: work
+              mountPath: /work
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: work
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}

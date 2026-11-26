@@ -1,0 +1,14 @@
+# An Amazon ECR repository that Crossplane creates and keeps in the declared state.
+# Delete this object to delete the repository and its images.
+apiVersion: ecr.aws.m.upbound.io/v1beta1
+kind: Repository
+metadata:
+  name: course-images
+  namespace: default
+spec:
+  forProvider:
+    region: us-east-1
+    imageTagMutability: IMMUTABLE
+    imageScanningConfiguration:
+      scanOnPush: true
+    forceDelete: true
