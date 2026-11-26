@@ -97,6 +97,15 @@ update_binstall() {
     done
 }
 
+# Return 0 when cargo-binstall publishes both SHA-256 files for a version.
+# cargo-binstall releases publish .tgz.sig signatures, not SHA-256 files. Skip such a release.
+# Usage: binstall_has_checksums VERSION
+binstall_has_checksums() {
+    local base_url="https://github.com/cargo-bins/cargo-binstall/releases/download/v$1"
+    curl -fsIL --retry 3 "${base_url}/cargo-binstall-x86_64-unknown-linux-musl.tgz.sha256sum" >/dev/null 2>&1 \
+        && curl -fsIL --retry 3 "${base_url}/cargo-binstall-aarch64-unknown-linux-musl.tgz.sha256sum" >/dev/null 2>&1
+}
+
 # Fetch SHA-256 digests for Typst from release assets. Update document-tools/Dockerfile.
 update_typst() {
     local new_ver="$1"
@@ -229,9 +238,13 @@ update_jq() {
 }
 
 if [ "$cur_binstall" != "$latest_binstall" ]; then
-    update_binstall "$latest_binstall"
-    status_binstall="updated $cur_binstall -> $latest_binstall"
-    updated=1
+    if binstall_has_checksums "$latest_binstall"; then
+        update_binstall "$latest_binstall"
+        status_binstall="updated $cur_binstall -> $latest_binstall"
+        updated=1
+    else
+        status_binstall="no SHA-256 files for $latest_binstall"
+    fi
 fi
 
 if [ "$cur_typst" != "$latest_typst" ]; then

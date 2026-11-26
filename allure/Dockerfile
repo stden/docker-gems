@@ -14,11 +14,11 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 WORKDIR /tmp
 RUN set -eux; \
     base=https://repo1.maven.org/maven2/io/qameta/allure/allure-commandline; \
-    version=$(curl -fsSL "$base/maven-metadata.xml" \
+    version=$(curl -fsSL --retry 5 --retry-delay 10 "$base/maven-metadata.xml" \
       | sed -n 's:.*<version>\(2\.[0-9]*\.[0-9]*\)</version>.*:\1:p' | sort -V | tail -n 1); \
     archive="allure-commandline-$version.tgz"; \
-    curl -fsSLO "$base/$version/$archive"; \
-    curl -fsSLO "$base/$version/$archive.sha512"; \
+    curl -fsSL --retry 5 --retry-delay 10 -O "$base/$version/$archive"; \
+    curl -fsSL --retry 5 --retry-delay 10 -O "$base/$version/$archive.sha512"; \
     echo "$(cut -d ' ' -f 1 "$archive.sha512")  $archive" | sha512sum --check; \
     mkdir /opt/allure2; \
     tar -xzf "$archive" -C /opt/allure2 --strip-components=1
