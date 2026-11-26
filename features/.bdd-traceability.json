@@ -1,0 +1,533 @@
+{
+  "framework": "behave",
+  "generated_files": {
+    "docker_gems_repository_requirements.feature": "da53ef4cbd48dad014ad58218c135ffe44f747d300a284316095db61b6366991"
+  },
+  "generator": "convert-specs-to-bdd",
+  "requirements": [
+    {
+      "end_line": 5,
+      "exclusion_reason": null,
+      "id": "AC-1",
+      "line": 5,
+      "scenarios": [
+        {
+          "feature": "docker_gems_repository_requirements.feature",
+          "line": 9,
+          "scenario": "each file starts with \"# stden/<directory>\", has a blank second line, has a third line of at most 100 bytes, and is smaller than 25000 bytes"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_1"
+    },
+    {
+      "end_line": 6,
+      "exclusion_reason": null,
+      "id": "AC-2",
+      "line": 6,
+      "scenarios": [
+        {
+          "feature": "docker_gems_repository_requirements.feature",
+          "line": 16,
+          "scenario": "every image has between 1 and 3 Docker Hub categories"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_2"
+    },
+    {
+      "end_line": 7,
+      "exclusion_reason": null,
+      "id": "AC-3",
+      "line": 7,
+      "scenarios": [
+        {
+          "feature": "docker_gems_repository_requirements.feature",
+          "line": 23,
+          "scenario": "all four files use Java 25"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_3"
+    },
+    {
+      "end_line": 8,
+      "exclusion_reason": null,
+      "id": "AC-4",
+      "line": 8,
+      "scenarios": [
+        {
+          "feature": "docker_gems_repository_requirements.feature",
+          "line": 30,
+          "scenario": "it sets \"USER 10001:10001\""
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_4"
+    },
+    {
+      "end_line": 9,
+      "exclusion_reason": null,
+      "id": "AC-5",
+      "line": 9,
+      "scenarios": [
+        {
+          "feature": "docker_gems_repository_requirements.feature",
+          "line": 37,
+          "scenario": "no Dockerfile contains \"--allow-insecure-repositories\" or \"--allow-unauthenticated\""
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_5"
+    },
+    {
+      "end_line": 10,
+      "exclusion_reason": null,
+      "id": "AC-6",
+      "line": 10,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 9,
+          "scenario": "every image has \"languages-and-frameworks\" in its category list"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_6"
+    },
+    {
+      "end_line": 11,
+      "exclusion_reason": null,
+      "id": "AC-7",
+      "line": 11,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 16,
+          "scenario": "every image except compilers, latex, and java-eks has both up.sh and up.cmd"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_7"
+    },
+    {
+      "end_line": 12,
+      "exclusion_reason": null,
+      "id": "AC-8",
+      "line": 12,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 23,
+          "scenario": "no Dockerfile sets a secret value in an ENV instruction"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_8"
+    },
+    {
+      "end_line": 13,
+      "exclusion_reason": null,
+      "id": "AC-9",
+      "line": 13,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 30,
+          "scenario": "argocd Dockerfile and kustomization.yaml use the same Argo CD version"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_9"
+    },
+    {
+      "end_line": 14,
+      "exclusion_reason": null,
+      "id": "AC-10",
+      "line": 14,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 37,
+          "scenario": "java-ui-browser and android pin the same Gradle version"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_10"
+    },
+    {
+      "end_line": 15,
+      "exclusion_reason": null,
+      "id": "AC-11",
+      "line": 15,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 41,
+          "scenario": "every tool Dockerfile sets WORKDIR /workspace"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_11"
+    },
+    {
+      "end_line": 16,
+      "exclusion_reason": null,
+      "id": "AC-12",
+      "line": 16,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 48,
+          "scenario": "every tool image ends with CMD [\"bash\"]"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_12"
+    },
+    {
+      "end_line": 17,
+      "exclusion_reason": null,
+      "id": "AC-13",
+      "line": 17,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 55,
+          "scenario": "every Dockerfile pipe has SHELL pipefail set before it"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_13"
+    },
+    {
+      "end_line": 18,
+      "exclusion_reason": null,
+      "id": "AC-14",
+      "line": 18,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 62,
+          "scenario": "every installing Dockerfile ends with a version check RUN"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_14"
+    },
+    {
+      "end_line": 19,
+      "exclusion_reason": null,
+      "id": "AC-15",
+      "line": 19,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 69,
+          "scenario": "every pip install uses --no-cache-dir"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_15"
+    },
+    {
+      "end_line": 20,
+      "exclusion_reason": null,
+      "id": "AC-16",
+      "line": 20,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 76,
+          "scenario": "every npm install uses --no-audit and --no-fund"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_16"
+    },
+    {
+      "end_line": 21,
+      "exclusion_reason": null,
+      "id": "AC-17",
+      "line": 21,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 83,
+          "scenario": "no ci/ shell script has a UTF-8 BOM"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_17"
+    },
+    {
+      "end_line": 22,
+      "exclusion_reason": null,
+      "id": "AC-18",
+      "line": 22,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 90,
+          "scenario": "every image README.md contains a \"What you learn\" section"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_18"
+    },
+    {
+      "end_line": 23,
+      "exclusion_reason": null,
+      "id": "AC-19",
+      "line": 23,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 97,
+          "scenario": "java-17/Dockerfile uses JDK 17"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_19"
+    },
+    {
+      "end_line": 24,
+      "exclusion_reason": null,
+      "id": "AC-20",
+      "line": 24,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 104,
+          "scenario": "docker-gems.typ compiles without errors"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_20"
+    },
+    {
+      "end_line": 25,
+      "exclusion_reason": null,
+      "id": "AC-21",
+      "line": 25,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 111,
+          "scenario": "ci/lint-presentation.sh exits 0 for docker-gems.typ"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_21"
+    },
+    {
+      "end_line": 26,
+      "exclusion_reason": null,
+      "id": "AC-22",
+      "line": 26,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 118,
+          "scenario": ".gitignore contains entries for *.pdf and .worktrees/"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_22"
+    },
+    {
+      "end_line": 32,
+      "exclusion_reason": null,
+      "id": "AC-28",
+      "line": 32,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 160,
+          "scenario": ".typos.toml allows the word \"certifi\""
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_28"
+    },
+    {
+      "end_line": 33,
+      "exclusion_reason": null,
+      "id": "AC-29",
+      "line": 33,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 167,
+          "scenario": "dependabot.yml suppresses PRs for java-17"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_29"
+    },
+    {
+      "end_line": 34,
+      "exclusion_reason": null,
+      "id": "AC-30",
+      "line": 34,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 174,
+          "scenario": "every .sh file in the repo root and ci/ has the exec bit set in git"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_30"
+    },
+    {
+      "end_line": 35,
+      "exclusion_reason": null,
+      "id": "AC-31",
+      "line": 35,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 181,
+          "scenario": "every curl and wget download in a Dockerfile uses HTTPS, not HTTP"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_31"
+    },
+    {
+      "end_line": 36,
+      "exclusion_reason": null,
+      "id": "AC-32",
+      "line": 36,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 188,
+          "scenario": "all GitHub Actions workflow files use ubuntu-24.04, not ubuntu-latest"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_32"
+    },
+    {
+      "end_line": 37,
+      "exclusion_reason": null,
+      "id": "AC-33",
+      "line": 37,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 195,
+          "scenario": "every CMD instruction in a Dockerfile uses JSON form, not shell form"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_33"
+    },
+    {
+      "end_line": 38,
+      "exclusion_reason": null,
+      "id": "AC-34",
+      "line": 38,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 202,
+          "scenario": "every Dockerfile that contains COPY . . also has a .dockerignore file"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_34"
+    },
+    {
+      "end_line": 39,
+      "exclusion_reason": null,
+      "id": "AC-35",
+      "line": 39,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 209,
+          "scenario": "every apk add instruction uses --no-cache"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_35"
+    },
+    {
+      "end_line": 40,
+      "exclusion_reason": null,
+      "id": "AC-36",
+      "line": 40,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 216,
+          "scenario": "no ARG instruction uses a name that suggests a secret"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_36"
+    },
+    {
+      "end_line": 41,
+      "exclusion_reason": null,
+      "id": "AC-37",
+      "line": 41,
+      "scenarios": [
+        {
+          "feature": "docker_gems_structure_checks.feature",
+          "line": 223,
+          "scenario": "the build-and-publish job in docker-images.yml has fail-fast: false"
+        }
+      ],
+      "source": "specs/docker_gems_requirements.md",
+      "state": "mapped",
+      "tag": "@REQ_AC_37"
+    }
+  ],
+  "schema_version": 1,
+  "sources": [
+    {
+      "path": "specs/docker_gems_requirements.md",
+      "sha256": "96371a227833db109b98c6e7a1bb8cc02922a24e3d2b6c7250a709a580ce8f15"
+    },
+    {
+      "path": "features/docker_gems_structure_checks.feature",
+      "sha256": "6349eeb6cdfaf0e080f961175ea6e2eda34111f44443cc9f09286a26f61c3cfb",
+      "note": "Manually written; not managed by convert-specs-to-bdd."
+    }
+  ]
+}

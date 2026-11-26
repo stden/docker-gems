@@ -1,0 +1,23 @@
+# The docker-gems project: Argo CD can deploy only this repository, and only to these namespaces.
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: docker-gems
+  namespace: argocd
+spec:
+  description: Applications of the docker-gems course repository
+  sourceRepos:
+    - https://github.com/stden/docker-gems.git
+  destinations:
+    - server: https://kubernetes.default.svc
+      namespace: open-webui
+    - server: https://kubernetes.default.svc
+      namespace: graphify
+    - server: https://kubernetes.default.svc
+      namespace: codegraph
+    - server: https://kubernetes.default.svc
+      namespace: eks-demo
+  # Each application creates its own namespace with Pod Security labels.
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace

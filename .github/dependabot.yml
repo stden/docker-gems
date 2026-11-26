@@ -1,0 +1,52 @@
+# Check application dependencies, base images, and GitHub Actions for updates.
+version: 2
+
+updates:
+  - package-ecosystem: pip
+    directory: /my-python-app
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 5
+    groups:
+      python-dependencies:
+        patterns: ["*"]
+        update-types: [minor, patch]
+
+  - package-ecosystem: maven
+    directory: /java-eks
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 5
+    groups:
+      java-dependencies:
+        patterns: ["*"]
+        update-types: [minor, patch]
+
+  # Cover every top-level Dockerfile. Review floating tags under the AGENTS.md version policy.
+  # Review coordinated JDK, Argo CD, and PostgreSQL upgrades with their tests and manifests.
+  # java-17 is intentionally pinned to Java 17 — ignore all base-image updates for that directory.
+  - package-ecosystem: docker
+    directories: ["/*"]
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      base-images:
+        patterns: ["*"]
+        update-types: [minor, patch]
+
+  # java-17 must stay on Java 17 — suppress all Dependabot PRs for this directory.
+  - package-ecosystem: docker
+    directory: /java-17
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      github-actions:
+        patterns: ["*"]
